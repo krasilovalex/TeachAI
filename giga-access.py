@@ -1,6 +1,6 @@
 import requests
 
-AUTH_KEY = "YTJiMDA1MjQtMDQzZC00Nzg2LWExZmEtMmQyZGQzYjAyNTc4Ojg5YmJlZTBkLTdlMjUtNDQxNC1hODk0LTY3YmQwZGM2MTQ1NQ=="  # В формате base64 от client_id:client_secret
+AUTH_KEY = "your auth key"  # В формате base64 от client_id:client_secret
 TOKEN_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 
 def get_gigachat_access_token():
