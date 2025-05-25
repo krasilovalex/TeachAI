@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Анализ промпта</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #C8F7FF;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 25px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4ecdc4;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3bbcb2;
+    }
+
+    .result {
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      margin-top: auto;
+      height: 80px;
+      background-color: #fff;
+      border-radius: 25px 25px 0 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dom-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dom {
+      height: 40px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Общение с ИИ</h1>
+  <div class="card">
+    <textarea id="promptInput" placeholder="Введите ваш промпт..."></textarea>
+    <button onclick="analyzePrompt()">Анализировать</button>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="footer">
+    <button class="dom-btn" onclick="window.location.href='index.html'" title="Назад">
+      <img src="domik.png" alt="Домой" class="dom">
+    </button>
+  </div>
+
+  <script>
+    async function analyzePrompt() {
+      const prompt = document.getElementById('promptInput').value;
+      if (!prompt.trim()) return alert("Введите текст промпта.");
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = 'Загрузка...';
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await response.json();
+        resultDiv.textContent = data.analysis || "Нет результата.";
+      } catch (error) {
+        resultDiv.textContent = "Ошибка при анализе промпта.";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>

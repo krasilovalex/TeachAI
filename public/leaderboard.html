@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Таблица лидеров — Prompt School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #C8F7FF;
+      color: #333;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 30px 20px 100px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .description {
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .filters input, .filters select {
+      padding: 6px 10px;
+      font-size: 15px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .leaderboard-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .rank {
+      width: 36px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .username {
+      flex: 1;
+      font-weight: 600;
+      margin-left: 5px;
+      font-size: 12px;
+    }
+
+    .level, .exp {
+      min-width: 80px;
+      text-align: right;
+      font-size: 12px;
+      padding : 5px;
+      color: #333;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background-color: #fff;
+      border-radius: 25px 25px 0 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dom-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dom {
+      height: 40px;
+      width: auto;
+    }
+
+    .error-message {
+      text-align: center;
+      color: red;
+    }
+
+    @media (max-width: 480px) {
+      .level, .exp {
+        font-size: 13px;
+        min-width: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏆 Таблица лидеров</h1>
+    <p class="description">Топ пользователей по уровню и опыту</p>
+
+    <div class="filters">
+      <label>
+        Мин. уровень:
+        <input type="number" id="minLevel" value="1" min="0"/>
+      </label>
+      <label>
+        Кол-во участников:
+        <select id="limit">
+          <option value="10">Топ 10</option>
+          <option value="25" selected>Топ 25</option>
+          <option value="50">Топ 50</option>
+          <option value="100">Топ 100</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="leaderboard" class="leaderboard"></div>
+  </div>
+
+  <div class="footer">
+    <button class="dom-btn" onclick="goHome()" title="Домой">
+      <img src="domik.png" alt="Домой" class="dom">
+    </button>
+  </div>
+
+  <script>
+    let allUsers = [];
+
+    async function fetchLeaderboard() {
+      try {
+        const res = await fetch('/api/leaderboard');
+        allUsers = await res.json();
+        applyFilters();
+      } catch (e) {
+        document.getElementById('leaderboard').innerHTML =
+          '<p class="error-message">Ошибка загрузки данных.</p>';
+        console.error(e);
+      }
+    }
+
+    function applyFilters() {
+      const minLevel = parseInt(document.getElementById('minLevel').value) || 0;
+      const limit = parseInt(document.getElementById('limit').value);
+      const filtered = allUsers
+        .filter(user => user.level >= minLevel)
+        .sort((a, b) => b.level - a.level || b.experience - a.experience)
+        .slice(0, limit);
+
+      const container = document.getElementById('leaderboard');
+      container.innerHTML = '';
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p>Нет подходящих участников.</p>';
+        return;
+      }
+
+      filtered.forEach((user, index) => {
+        const div = document.createElement('div');
+        div.className = 'leaderboard-entry';
+        div.innerHTML = `<span class="rank">#${index + 1}</span>
+                         <span class="username">${user.username}</span>
+                         <span class="level">Lvl ${user.level}</span>
+                         <span class="exp">${user.experience} XP</span>`;
+        container.appendChild(div);
+      });
+    }
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+
+    document.getElementById('minLevel').addEventListener('input', applyFilters);
+    document.getElementById('limit').addEventListener('change', applyFilters);
+
+    fetchLeaderboard();
+  </script>
+</body>
+</html>

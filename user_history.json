@@ -1,0 +1,246 @@
+{
+    "users": {
+        "123456789": {
+            "username": "user1",
+            "progress": {
+                "completed_themes": [
+                    "Основы промпт-инжиниринга"
+                ],
+                "tests_passed": 2,
+                "best_prompts": [
+                    {
+                        "prompt": "Опиши закон термодинамики простым языком",
+                        "rating": 9.5
+                    }
+                ]
+            },
+            "experience": 0,
+            "level": 2,
+            "achievements": [
+                "Начинающий промпт-инженер"
+            ],
+            "feedback": []
+        },
+        "1761547850": {
+            "username": "Miyounii",
+            "progress": {
+                "completed_themes": [
+                    "Использование контекста в промптах",
+                    "Типы промптов"
+                ],
+                "tests_passed": 2,
+                "test_results": [
+                    {
+                        "theme": "Использование контекста в промптах",
+                        "correct_answers": 2,
+                        "total_questions": 2,
+                        "score": "100.00%"
+                    },
+                    {
+                        "theme": "Использование контекста в промптах",
+                        "correct_answers": 2,
+                        "total_questions": 2,
+                        "score": "100.00%"
+                    }
+                ],
+                "best_prompts": [],
+                "completed_tests": [
+                    "Использование контекста в промптах"
+                ],
+                "experience": 10,
+                "level": 0
+            },
+            "level": 1,
+            "achievements": [],
+            "feedback": []
+        },
+        "5244307856": {
+            "username": "LubitelusOfManulus",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "1388911463": {
+            "username": "raya_praqm",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 23,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "5043656672": {
+            "username": "localhostings",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "1998708818": {
+            "username": "ItsMikkey",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "1835437097": {
+            "username": "bebka812",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "6964113505": {
+            "username": "AckermanAmi",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "6836335949": {
+            "username": "cmsxkl",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": [
+                    {
+                        "prompt": "Что такое арбуз?",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "что такое арбуз",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "что такое арбуз",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "зэщ",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "ыа",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "что такое арбуз?",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "арьуз",
+                        "rating": 5,
+                        "api": "LLaMA"
+                    },
+                    {
+                        "prompt": "Что такое арбуз",
+                        "rating": 5,
+                        "api": "GigaChat"
+                    }
+                ],
+                "experience": 80,
+                "level": 0
+            },
+            "level": 666,
+            "experience": 124512498,
+            "achievements": [
+                "Разработчик бота"
+            ],
+            "feedback": []
+        },
+        "1852861777": {
+            "username": "RainTetei",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "1996114208": {
+            "username": "EastCoast_ATUA",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "341208772": {
+            "username": "Zanyd4",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        },
+        "6129986431": {
+            "username": "floywees",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        }
+    }
+}
