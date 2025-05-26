@@ -45,16 +45,20 @@ def query_gigachat_for_feedback(prompt):
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             },
-            json={
-                "model": "GigaChat:latest",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": f"Проанализируй следующий промпт и дай рекомендацию по улучшению. Отвечай только на русском языке.\n\n{prompt}"
-                    }
-                ],
-                "temperature": 0.7
-            },
+           json = {
+    "model": "GigaChat:latest",
+    "messages": [
+        {
+            "role": "system",
+            "content": "Ты — дружелюбный, профессиональный помощник. Отвечай понятно, тепло и по делу. Используй живой, но уместный стиль общения."
+        },
+        {
+            "role": "user",
+            "content": f"Расскажи об этом. Отвечай только на русском языке.\n\n{prompt}"
+        }
+    ],
+    "temperature": 0.7
+},
             timeout=60,
             verify=False  # Отключаем SSL-проверку
         )
