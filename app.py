@@ -9,6 +9,75 @@ app = Flask(__name__, static_folder="public")
 DATA_FILE = 'user_history.json'
 logging.basicConfig(level=logging.INFO)
 
+
+LEVEL_ACHIEVEMENTS = {
+    1: "Ученики ИИ",
+    5: "Подмастерье TeachAI",
+    10: "Инженер Промптов",
+    15: "Архитектор Разума",
+    20: "Мастер ИИ",
+    25: "Повелитель Моделей",
+    30: "TeachAI: Легенда"
+}
+
+LEVEL_THRESHOLDS = [
+    0,     # Уровень 1
+    100,   # Уровень 2
+    250,   # Уровень 3
+    450,   # Уровень 4
+    700,   # Уровень 5
+    950,   # Уровень 6
+    1150,  # Уровень 7
+    1300,  # Уровень 8
+    1400,  # Уровень 9
+    1500,  # Уровень 10
+    1700,  # Уровень 11
+    1900,  # Уровень 12
+    2150,  # Уровень 13
+    2400,  # Уровень 14
+    2700,  # Уровень 15
+    3000,  # Уровень 16
+    3400,  # Уровень 17
+    3800,  # Уровень 18
+    4200,  # Уровень 19
+    4600,  # Уровень 20
+    5100,  # Уровень 21
+    5600,  # Уровень 22
+    6200,  # Уровень 23
+    6800,  # Уровень 24
+    7500,  # Уровень 25
+    8200,  # Уровень 26
+    9000,  # Уровень 27
+    9800,  # Уровень 28
+    10700, # Уровень 29
+    11700  # Уровень 30
+]
+
+def update_level(users, user_id):
+    xp = users[user_id]['experience']
+    current_level = users[user_id]['level']
+
+    # Индекс соответствует уровню (0 = уровень 1, 1 = уровень 2, ...)
+    new_level = 1
+    for i, threshold in enumerate(LEVEL_THRESHOLDS):
+        if xp >= threshold:
+            new_level = i + 1  # i=0 -> уровень 1, i=1 -> уровень 2
+        else:
+            break
+
+    if new_level > current_level:
+        users[user_id]['level'] = new_level
+        # Добавим достижения за новые уровни
+        for lvl, achievement in LEVEL_ACHIEVEMENTS.items():
+            if new_level >= lvl and achievement not in users[user_id]['achievements']:
+                users[user_id]['achievements'].append(achievement)
+
+def get_level_by_experience(exp):
+    for i in reversed(range(len(LEVEL_THRESHOLDS))):
+        if exp >= LEVEL_THRESHOLDS[i]:
+            return i + 1
+    return 1
+
 def get_user_id_by_username(username):
     with open(DATA_FILE, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -30,21 +99,52 @@ def index():
 
 
 
+def load_users():
+    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        return data.get("users", {})  # <-- вот ключевой момент
+
+def save_users(users):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump({"users": users}, f, ensure_ascii=False, indent=4)
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze_prompt():
     try:
+        print("Абсолютный путь к DATA_FILE:", os.path.abspath(DATA_FILE))
         data = request.get_json()
         prompt = data.get('prompt', '').strip()
+        user_id = str(data.get('user_id'))  # приведение к строке — обязательно
 
         if not prompt:
             return jsonify({'error': 'Пустой промпт'}), 400
 
+        if not user_id:
+            return jsonify({'error': 'Не указан user_id'}), 400
+
+        # Загружаем пользователей
+        users = load_users()
+        print(users.keys())
+
+        if user_id not in users:
+            return jsonify({'error': f'Пользователь {user_id} не найден'}), 404
+
+        # Увеличиваем опыт
+        users[user_id]['experience'] += 20
+
+        update_level(users, user_id)
+
+        # Сохраняем обратно
+        save_users(users)
+
+        # Анализируем промпт (например, через GigaChat API)
         result = query_gigachat_for_feedback(prompt)
+
         return jsonify({'analysis': result})
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
-
-    
 
 @app.route('/api/user/<int:user_id>')
 def get_user_data(user_id):
@@ -175,28 +275,10 @@ def confirm_payment(user_id):
     except Exception as e:
         app.logger.exception("Ошибка при подтверждении оплаты")
         return jsonify({'error': str(e)}), 500
+
+
     
-LEVEL_THRESHOLDS = {
-    1: 0,
-    2: 10,
-    3: 25,
-    4: 50,
-    5: 80,
-    6: 120
-    # и т.д.
-}
 
-ACHIEVEMENTS = {
-    1: "Первый шаг",
-    3: "Наставник новичков",
-    5: "Продвинутый инженер"
-}
-
-def load_user_data():
-    if not os.path.exists(DATA_FILE):
-        return {"users": {}}
-    with open(DATA_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
 
 def save_user_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
@@ -210,56 +292,49 @@ def calculate_level(experience):
             level = lvl
     return level
 
-@app.route('/api/complete_task', methods=['POST'])
+@app.route('/api/complete-task', methods=['POST'])
 def complete_task():
     try:
         data = request.get_json()
-        user_id = str(data.get('userId'))
-        task_id = data.get('taskId')
-
-        app.logger.info(f"Получен userId={user_id}, taskId={task_id}")
+        user_id = str(data.get('user_id'))
+        task_id = data.get('task_id')
 
         if not user_id or not task_id:
-            return jsonify({'status': 'error', 'message': 'userId и taskId обязательны'}), 400
+            return jsonify({'success': False, 'message': 'user_id или task_id отсутствует'}), 400
 
-        user_data = load_user_data()
-        users = user_data.setdefault('users', {})
+        users = load_users()
+        if user_id not in users:
+            return jsonify({'success': False, 'message': 'Пользователь не найден'}), 404
 
-        # Инициализация пользователя, если он ещё не существует
-        user = users.get(user_id)
-        if not user:
-            return jsonify({'status': 'error', 'message': 'Пользователь не найден'}), 404
+        user_data = users[user_id]
 
-        # Обеспечим наличие вложенного progress
-        user.setdefault('progress', {})
-        progress = user['progress']
+        # Обязательно инициализируем поля
+        if 'completed_tasks' not in user_data:
+            user_data['completed_tasks'] = []
 
-        # Обновляем структуру, если каких-то полей нет
-        progress.setdefault('completed_themes', [])
-        progress.setdefault('tests_passed', 0)
-        progress.setdefault('test_results', [])
-        progress.setdefault('best_prompts', [])
-        progress.setdefault('completed_tests', [])
+        if 'experience' not in user_data:
+            user_data['experience'] = 0
 
-        # Добавляем taskId, если он ещё не зафиксирован
-        if task_id not in progress['completed_tests']:
-            progress['completed_tests'].append(task_id)
-            save_user_data(user_data)
-            app.logger.info(f"Пользователь {user_id} выполнил задачу {task_id}")
+        # Проверка на повтор
+        if task_id in user_data['completed_tasks']:
+            return jsonify({'success': False, 'message': 'Задача уже выполнена'}), 400
 
-        return jsonify({
-            'status': 'ok',
-            'completedTests': progress['completed_tests']
-        })
+        # Обновление данных
+        
+        user_data['completed_tasks'].append(task_id)
+        logging.info(f"[{user_id}] Before XP: {user_data.get('experience')}")
+        user_data['experience'] += 50
+        logging.info(f"[{user_id}] After XP: {user_data.get('experience')}")
 
-    except FileNotFoundError:
-        return jsonify({'status': 'error', 'message': 'Файл user_history.json не найден'}), 500
-    except json.JSONDecodeError:
-        return jsonify({'status': 'error', 'message': 'Ошибка разбора JSON'}), 500
+        update_level(users, user_id)  # важно, чтобы эта функция тоже меняла users[user_id]
+
+        save_users(users)  # обязательно сохранить
+
+        return jsonify({'success': True})
     except Exception as e:
-        app.logger.exception("Неожиданная ошибка при выполнении задачи")
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
 @app.route('/api/get_completed_tasks', methods=['GET'])
 def get_completed_tasks():
     user_id = request.args.get('userId')  # передай userId с фронта

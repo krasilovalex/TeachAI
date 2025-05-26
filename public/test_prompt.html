@@ -113,9 +113,30 @@
   </div>
 
   <script>
+    let user_id = null;
+
+    window.Telegram.WebApp.ready();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const tg = window.Telegram.WebApp;
+      const user = tg.initDataUnsafe?.user;
+
+      if (user && user.id) {
+        user_id = user.id.toString();
+        console.log("User ID из Telegram:", user_id);
+      } else {
+        alert("Ошибка: Не удалось получить user_id из Telegram WebApp.");
+      }
+    });
+
     async function analyzePrompt() {
       const prompt = document.getElementById('promptInput').value;
       if (!prompt.trim()) return alert("Введите текст промпта.");
+
+      if (!user_id) {
+        alert("Ошибка: user_id не получен из Telegram.");
+        return;
+      }
 
       const resultDiv = document.getElementById('result');
       resultDiv.style.display = 'block';
@@ -127,11 +148,14 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ prompt })
+          body: JSON.stringify({
+            prompt: prompt,
+            user_id: user_id
+          })
         });
 
         const data = await response.json();
-        resultDiv.textContent = data.analysis || "Нет результата.";
+        resultDiv.textContent = data.analysis || data.error || "Нет результата.";
       } catch (error) {
         resultDiv.textContent = "Ошибка при анализе промпта.";
         console.error(error);

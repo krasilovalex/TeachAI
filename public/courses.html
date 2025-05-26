@@ -439,68 +439,67 @@ function closesModal(id) {
 }
 
 
-  </script>
+</script>
   <script>
-    // Сначала получаем userId из Telegram WebApp и сохраняем его в data-атрибут body
-  
-    if (userId) {
-      document.body.dataset.userId = userId;
-      console.log("userId из Telegram:", userId);
+   function checkAnswer(event, questionId, correctAnswer) {
+  event.preventDefault();
+  const form = event.target;
+  const selected = form.querySelector(`input[name="${questionId}"]:checked`);
+  const resultDiv = document.getElementById(`result-${questionId}`);
+
+  if (!selected) {
+    resultDiv.innerText = "Выберите один из вариантов ответа.";
+    resultDiv.style.color = "orange";
+    return;
+  }
+
+  if (selected.value === correctAnswer) {
+    resultDiv.innerText = "Верно!";
+    resultDiv.style.color = "green";
+    markTaskComplete(`task-1-1`);
+  } else {
+    resultDiv.innerText = "Неправильно. Попробуйте снова.";
+    resultDiv.style.color = "red";
+  }
+}
+
+function markTaskComplete(taskId) {
+  const userId = document.body.dataset.userId;
+
+  if (!userId) {
+    console.warn("userId не найден в data-атрибуте.");
+    return;
+  }
+
+  if (localStorage.getItem(`task_${taskId}_completed`)) {
+    console.log("Эта задача уже была отмечена как выполненная.");
+    return;
+  }
+
+  fetch('https://your-server-name.ru/api/complete-task', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      user_id: userId,
+      task_id: taskId
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      console.log("Задача выполнена, +50 опыта");
+      localStorage.setItem(`task_${taskId}_completed`, "true");
     } else {
-      console.warn("userId не получен от Telegram WebApp");
+      console.warn("Ошибка при обновлении опыта:", data.message);
     }
-  
-    // Функция проверки ответа
-    function checkAnswer(event, questionId, correctAnswer) {
-      event.preventDefault();
-      const form = event.target;
-      const selected = form.querySelector(`input[name="${questionId}"]:checked`);
-      const resultDiv = document.getElementById(`result-${questionId}`);
-  
-      if (!selected) {
-        resultDiv.innerText = "Выберите один из вариантов ответа.";
-        resultDiv.style.color = "orange";
-        return;
-      }
-  
-      if (selected.value === correctAnswer) {
-        resultDiv.innerText = "Верно!";
-        resultDiv.style.color = "green";
-        markTaskComplete(`task-1-1`); // фиксируем задачу как выполненную
-      } else {
-        resultDiv.innerText = "Неправильно. Попробуйте снова.";
-        resultDiv.style.color = "red";
-      }
-    }
-  
-    // Фиксация выполнения задания
-    function markTaskComplete(taskId) {
-      const userId = document.body.dataset.userId;
-  
-      if (!userId) {
-        console.error('userId не найден в data-user-id');
-        return;
-      }
-      console.log('Попытка отправки задачи', { userId, taskId });
-  
-      fetch('/api/complete_task', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: userId,
-          taskId: taskId
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Ответ от сервера:', data);
-      })
-      .catch(error => {
-        console.error('Ошибка при отправке запроса:', error);
-      });
-    }
+  })
+  .catch(error => {
+    console.error("Ошибка при отправке запроса:", error);
+  });
+}
+
   </script>
 </body>
 </html>

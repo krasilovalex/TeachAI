@@ -19,7 +19,8 @@
             "achievements": [
                 "Начинающий промпт-инженер"
             ],
-            "feedback": []
+            "feedback": [],
+            "completed_tasks": ["task-1-1"]
         },
         "1761547850": {
             "username": "Miyounii",
@@ -88,9 +89,12 @@
                 "test_results": [],
                 "best_prompts": []
             },
-            "level": 1,
-            "experience": 0,
-            "achievements": [],
+            "completed_tasks": [],
+            "level": 2,
+            "experience": 100,
+            "achievements": [
+                "Ученики ИИ"
+            ],
             "feedback": []
         },
         "1998708818": {
@@ -179,12 +183,10 @@
                         "rating": 5,
                         "api": "GigaChat"
                     }
-                ],
-                "experience": 80,
-                "level": 0
+                ]
             },
-            "level": 666,
-            "experience": 124512498,
+            "level": 10,
+            "experience": 1560,
             "achievements": [
                 "Разработчик бота"
             ],
