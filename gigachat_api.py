@@ -6,7 +6,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 🔐 Authorization Key (Base64 от client_id:client_secret)
-AUTH_KEY = "auth key"
+AUTH_KEY = "YTJiMDA1MjQtMDQzZC00Nzg2LWExZmEtMmQyZGQzYjAyNTc4Ojg5YmJlZTBkLTdlMjUtNDQxNC1hODk0LTY3YmQwZGM2MTQ1NQ=="
 
 # 🔗 URL-ы
 TOKEN_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
