@@ -31,23 +31,27 @@ def handle_start(message):
 
     # create keyboard
     markup = InlineKeyboardMarkup()
-    markup.add(
-        InlineKeyboardButton("📚Изучить темы📚", callback_data="theme"),
-        InlineKeyboardButton("✅Тесты✅", callback_data="test"),
-        InlineKeyboardButton("✨Лучшие промпты✨", callback_data="best_prompts"),
-        InlineKeyboardButton("📊Статистика📊", callback_data="stats")
-    )
+    markup.row(
+    InlineKeyboardButton("✅Мини-приложение✅", callback_data="mini"),
+    InlineKeyboardButton("✨Использовать нейросеть✨", callback_data="create_prompt")
+)
+    markup.row(
+    InlineKeyboardButton("📊Статистика📊", callback_data="stats"),
+    InlineKeyboardButton("🚀Таблица лидеров🚀", callback_data="leaderboard")
+)
 
 
     bot.send_message(
         message.chat.id,
         f"Привет, {username}! 👋\n"
-        "Я помогу тебе освоить Нейросети и ИИ.\n"
-        "Используй /theme для изучения тем, /prompt для тестирования промптов.\n"
-        "Удачи! 🚀\n"
-        "Используй кнопки для навигации",
+        "TeachAI — твой персональный наставник в мире искусственного интеллекта.\n"
+        "Учись создавать эффективные промпты, анализировать работу моделей, проходить интерактивные тесты и получать персональные рекомендации. \n"
+        "Всё прямо в Telegram.! 🚀\n"
+        "🚀 Преврати ИИ в инструмент своей силы.",
         reply_markup=markup
     )
+
+    
 
 
 
@@ -57,7 +61,7 @@ def handle_start(message):
 def open_mini_app(message):
     keyboard = InlineKeyboardMarkup()
     keyboard.add(
-        InlineKeyboardButton("🚀 Открыть mini app", web_app=WebAppInfo(url='https://963f6923-01c5-4407-95f4-dd40592f3c08.tunnel4.com'))
+        InlineKeyboardButton("🚀 Открыть mini app", web_app=WebAppInfo(url='https://cmsxkl.ddns.net'))
     )
     bot.send_message(message.chat.id, "Нажми на кнопку ниже, чтобы открыть приложение 👇", reply_markup=keyboard)
 
@@ -469,10 +473,10 @@ def leaderboard(message):
     data = load_data()
     users = data["users"]
 
-    leaderboard = sorted(users.items(), key=lambda x: x[1]["progress"].get("experience", 0), reverse=True)
+    leaderboard = sorted(users.items(), key=lambda x: x[1].get("experience", 0), reverse=True)
 
     top_users = leaderboard[:10]
-    leaderboard_text = "\n".join([f"🏅 {i+1}. @{escape_markdown(user[1]['username'])} - {user[1]['progress'].get('experience', 0)} XP"
+    leaderboard_text = "\n".join([f"🏅 {i+1}. @{escape_markdown(user[1]['username'])} - {user[1].get('experience', 0)} XP"
                                   for i,user in enumerate(top_users)])
     
     bot.send_message(message.chat.id, f"📊 *Топ-пользователей*\n\n{leaderboard_text}", parse_mode="Markdown")
