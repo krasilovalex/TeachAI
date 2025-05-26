@@ -33,7 +33,6 @@ def handle_start(message):
     markup = InlineKeyboardMarkup()
     markup.row(
     InlineKeyboardButton("✅Мини-приложение✅", callback_data="mini"),
-    InlineKeyboardButton("✨Использовать нейросеть✨", callback_data="create_prompt")
 )
     markup.row(
     InlineKeyboardButton("📊Статистика📊", callback_data="stats"),
@@ -80,6 +79,23 @@ def handle_themes(message):
     user_id = message.from_user.id
     theme_message = get_next_theme(user_id)
     bot.send_message(message.chat.id, theme_message, parse_mode="Markdown")
+
+    # command /leaderboard
+@bot.message_handler(commands=['leaderboard'])
+def get_leaderboard(message):
+    data = load_data()
+    users = data["users"]
+
+    leaderboard = sorted(users.items(), key=lambda x: x[1].get("experience", 0), reverse=True)
+
+    top_users = leaderboard[:10]
+    leaderboard_text = "\n".join([f"🏅 {i+1}. @{escape_markdown(user[1]['username'])} - {user[1].get('experience', 0)} XP"
+                                  for i,user in enumerate(top_users)])
+    
+    bot.send_message(message.chat.id, f"📊 *Топ-пользователей*\n\n{leaderboard_text}", parse_mode="Markdown")
+
+
+
 
 
 # Команда /done
@@ -170,95 +186,42 @@ def send_question(chat_id, user_id):
     bot.send_message(chat_id, question_text, reply_markup=keyboard)
 
 # Обработчик ответов
-@bot.callback_query_handler(func=lambda call: True,)
-def handle_answer(call):
+@bot.callback_query_handler(func=lambda call: True)
+def universal_callback_handler(call):
     if call.data.startswith('opt_'):
-        try:
-            index = int(call.data.split("_")[1])
-        except ValueError:
-            bot.send_message(call.message.chat.id, "Ошибка: неверный формат данных.")
-            return
+        handle_answer(call)  # обработка ответов на тест
 
-        
-        if 'test' in locals() and (index < 0 or index >= len(test)):
-            bot.send_message(call.message.chat.id, "Ошибка: неверный индекс.")
-            return
+    elif call.data == 'mini':
+        bot.answer_callback_query(call.id)
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(
+            InlineKeyboardButton("🚀 Открыть Mini App", web_app=WebAppInfo(url='https://cmsxkl.ddns.net'))
+        )
+        bot.send_message(call.message.chat.id, "Нажми на кнопку ниже 👇", reply_markup=keyboard)
 
-        user_id = call.from_user.id
-        session = user_sessions.get(user_id)
+    elif call.data == 'create_prompt':
+        bot.answer_callback_query(call.id)
+        fake_message = call.message  # это объект типа Message
+        create_prompt(fake_message)  # вызываем обработчик вручную
 
-        if not session:
-            bot.send_message(call.message.chat.id, "❌ Ошибка: Тест не найден. Запустите /test заново.")
-            return
-
-        test = session["test"]
-        question_index = session["index"]
-        correct_answer_index = test[question_index]["correct_answer_index"]
-
-        if index == correct_answer_index:
-            bot.send_message(call.message.chat.id, "✅ Правильный ответ!")
-            correct = True
-        else:
-            bot.send_message(call.message.chat.id, f"❌ Неправильный ответ. Правильный ответ: {test[question_index]['options'][correct_answer_index]}")
-            correct = False
-
-        session["index"] += 1
-        if session["index"] >= len(test):
-            correct_answers = sum(1 for i in range(len(test)) if test[i]["correct_answer_index"] == index)
-            update_test_results(user_id, session["theme"], correct_answers, len(test))
-            bot.send_message(call.message.chat.id, f"🎉 Тест завершен! Вы набрали {correct_answers} из {len(test)} ({(correct_answers / len(test)) * 100:.2f}%)")
-            del user_sessions[user_id]  
-            return 
-
-        send_question(call.message.chat.id, user_id)
-    else:
-        # Обработка других типов callback_data (например, 'use_openai', 'use_llama')
-        handle_api_choice(call)
-
-
-
-
-
-
-    if call.data == "theme":
-        # Логика для /theme
-        theme_message = get_next_theme(call.from_user.id)
-        bot.send_message(call.message.chat.id, theme_message, parse_mode="Markdown")
-    elif call.data == "stats":
-        # Логика для /stats
+    elif call.data == 'stats':
+        bot.answer_callback_query(call.id)
         user_id = call.from_user.id
         stats_message = get_user_stats(user_id)
         bot.send_message(call.message.chat.id, stats_message, parse_mode="Markdown")
-    elif call.data == "best_prompts":
-        # Логика для /best_prompts
-        user_id = call.from_user.id
-        data = load_data()
-        best_prompts = data["users"].get(str(user_id), {}).get("progress", {}).get("best_prompts", [])
-        if best_prompts:
-            best_prompt_message = "\n".join([f"Промпт: {p['prompt']} (Рейтинг: {p['rating']})" for p in best_prompts])
-        else:
-            best_prompt_message = "У вас пока нет лучших промптов."
-        bot.send_message(call.message.chat.id, best_prompt_message)
-    elif call.data == "test":
-    # Логика для /test
-        user_id = call.from_user.id
-        result = get_test_for_theme(user_id)
 
-        if isinstance(result, str):  # Если функция вернула строку (ошибку)
-            bot.send_message(call.message.chat.id, result)
-            return
+    elif call.data == 'leaderboard':
+         bot.answer_callback_query(call.id)
+         leaderboard_text = get_leaderboard(call.message)  # вызов функции
+         bot.send_message(call.message.chat.id, leaderboard_text, parse_mode="Markdown")
 
-        theme, test = result
+    else:
+        bot.answer_callback_query(call.id, "Неизвестная команда.")
 
-        if not test:  # Проверяем, что тест не пустой
-            bot.send_message(call.message.chat.id, "Для этой темы пока нет тестов.")
-            return
 
-        question_index = 0
-        user_sessions[user_id] = {"theme": theme, "test": test, "index": question_index}
 
-        send_question(call.message.chat.id, user_id)    
- 
+
+
 
 
     
@@ -465,21 +428,6 @@ def escape_markdown(text):
     escape_chars = r'\_*[]()~`>#+-=|{}.!'
     return re.sub(f"([{re.escape(escape_chars)}])", r'\\\1', text)
 
-
-
-# command /leaderboard
-@bot.message_handler(commands=['leaderboard'])
-def leaderboard(message):
-    data = load_data()
-    users = data["users"]
-
-    leaderboard = sorted(users.items(), key=lambda x: x[1].get("experience", 0), reverse=True)
-
-    top_users = leaderboard[:10]
-    leaderboard_text = "\n".join([f"🏅 {i+1}. @{escape_markdown(user[1]['username'])} - {user[1].get('experience', 0)} XP"
-                                  for i,user in enumerate(top_users)])
-    
-    bot.send_message(message.chat.id, f"📊 *Топ-пользователей*\n\n{leaderboard_text}", parse_mode="Markdown")
 
 
 
