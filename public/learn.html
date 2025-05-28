@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style id="theme-style"></style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  updateCourseProgress('task-1', 3); // если 5 заданий
+});
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        Telegram.WebApp.ready();
+      } else {
+        alert("Откройте приложение через Telegram.");
+      }
+    });
+  </script>
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+    } else {
+      console.warn("Telegram WebApp API не доступен.");
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #C8F7FF;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1.nfi {
+      font-size: 20px;
+      margin-top: 20px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 300px;
+      background: #fff;
+      border-radius: 25px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      text-align: left;
+    }
+
+    .img_1 {
+      width: 39%;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+    }
+
+    .img_2 {
+      width: 35%;
+      position: absolute;
+      top: -5px;
+      right: 0px;
+    }
+
+    .img_3 {
+      width: 33%;
+      position: absolute;
+      top: 33px;
+      right: 0px;
+    }
+
+    .card h1, .card h2, .card a {
+      margin: 8px 0;
+      display: block;
+    }
+
+    .card h1 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #D3D3D3;
+    }
+
+    .card a {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      text-decoration: none;
+      margin-top: 40px;
+    }
+
+    .footer {
+      width: 100%;
+      height: 80px;
+      background-color: #fff;
+      border-radius: 25px 25px 0 0;
+      margin-top: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dom-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dom-btn:hover {
+      opacity: 0.8;
+      transform: scale(1.05);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .dom {
+      height: 40px;
+      width: auto;
+    }
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 25px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+.progress-bar-container {
+  width: 100%;
+  background-color: #E0E0E0;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 20px;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6DE1FF, #55C1FF);
+  text-align: center;
+  line-height: 20px;
+  color: #000;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 15px 0 0 15px;
+  transition: width 0.4s ease-in-out;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0.95;
+  transition: opacity 0.5s ease-in-out;
+}
+.toast.hidden {
+  display: none;
+}
+
+  </style>
+<script>
+    function isDark(hexColor) {
+      const r = parseInt(hexColor.substr(1, 2), 16);
+      const g = parseInt(hexColor.substr(3, 2), 16);
+      const b = parseInt(hexColor.substr(5, 2), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness < 128;
+    }
+    
+    function applyTheme() {
+      const tg = window.Telegram.WebApp;
+      const theme = tg.themeParams || {};
+      const secondaryBgColor = theme.secondary_bg_color || '#ffffff';
+    
+      if (!isDark(secondaryBgColor)) return;
+    
+      const textColor = theme.text_color || '#ffffff';
+      const hintColor = theme.hint_color || '#999999';
+      const linkColor = theme.link_color || '#0000ee';
+      const buttonColor = theme.button_color || '#C8F7FF';
+      const buttonTextColor = theme.button_text_color || '#000';
+    
+      const style = `
+        .card {
+          background: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .card h1, .card h2, .card a {
+          color: ${textColor} !important;
+        }
+        .footer {
+          background-color: ${secondaryBgColor} !important;
+        }
+        .footer .dom-btn,
+        .footer .dom {
+          background: none !important;
+          filter: none !important;
+        }
+        .modal-content {
+          background-color: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .toast {
+          background-color: ${hintColor} !important;
+        }
+        .card a {
+          color: ${linkColor} !important;
+        }
+        button:not(.dom-btn) {
+          background-color: ${buttonColor} !important;
+          color: ${buttonTextColor} !important;
+        }
+      `;
+    
+      document.getElementById('theme-style').innerHTML = style;
+    }
+    
+    
+    </script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          if (window.Telegram && window.Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            applyTheme(); // вызываем функцию для применения темы
+          } else {
+            alert("Откройте приложение через Telegram.");
+          }
+        });
+      </script>  
+</head>
+<body>
+  <div class="content">
+    <h1 class="nfi">Базовый курс "Нейросети и ИИ"</h1>
+
+    <div class="card">
+      <img src="chelblya.png" alt="Курс 1" class="img_1">
+      <h1>Введение в нейросети и ИИ</h1>
+      <h2>@cmsxkl</h2>
+      <a href="#" onclick="window.location.href = 'courses.html'">Начать курс</a>
+    </div>
+
+    <div class="card">
+      <img src="chelikblya.png" alt="Курс 2" class="img_2">
+      <h1>Типы нейросетей</h1>
+      <h2>@cmsxkl</h2>
+      <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
+      <h2>Только по подписке</h2>
+    </div>
+
+    <div class="card">
+      <img src="chelikblya.png" alt="Курс 2" class="img_3">
+      <h1>Как использовать нейросети в повседневной жизни</h1>
+      <h2>@cmsxkl</h2>
+      <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
+      <h2>Только по подписке</h2>
+    </div>
+    
+  </div>
+  <div class="footer">
+    <!-- Кнопка "Профиль" -->
+    <button class="dom-btn" onclick="window.location.href='index.html'" title="Профиль">
+      <img src="domik.png" alt="Профиль" class="dom">
+    </button>
+  
+    <!-- Кнопка "Лидеры" -->
+    <button class="dom-btn" onclick="window.location.href='leaderboard.html'" title="Лидеры" style="margin-left: 20px;">
+      <img src="leaderboard.png" alt="Лидеры" class="dom">
+    </button>
+
+    <!-- Кнопка "Лидеры" -->
+    <button class="dom-btn" onclick="window.location.href='test_prompt.html'" title="Промпт" style="margin-left: 20px;">
+      <img src="ai.png" alt="Промпт" class="dom">
+    </button>
+
+    
+  
+    <!-- Модалка профиля -->
+    <div id="profileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeProfile()">&times;</span>
+        <div class="profile-info">
+        
+          <img id="profilePhoto" src="" alt="Аватар" class="avatar">
+          <h2 id="profileName"></h2>
+          <p id="profileUsername"></p>
+          <p id="profileLevel"></p>
+          <p id="profileExperience"></p>
+          <p id="profileAchievements"></p>
+          <p id="profileSubscriptionStatus"></p>
+          <button onclick="buySubscription()" style="margin-top: 10px; background-color: #C8F7FF; color: rgb(0, 0, 0); border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer;">Купить подписку за ⭐ 320</button>
+          <button id="confirmSubscriptionBtn" onclick="confirmSubscription()" style="font-family: Montserrat, sans-serif; margin-top: 10px; background-color: #C8F7FF; color: rgb(0, 0, 0); border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; display: none;">Подтвердить подписку</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="achievement-toast" class="toast hidden"></div>
+
+<script>
+    function openProfile() {
+      console.log("Кнопка нажата");
+      if (!window.Telegram || !window.Telegram.WebApp) {
+    alert("Telegram WebApp не инициализирован. Откройте через Telegram.");
+    return;
+  }
+  const modal = document.getElementById("profileModal");
+  // Инициализация
+
+  const tg = window.Telegram.WebApp;
+  const user = tg.initDataUnsafe?.user;
+
+  if (!user) {
+    alert("Пользователь не авторизован через Telegram.");
+    return;
+  }
+
+  document.getElementById("profileName").innerText =
+    user.first_name + (user.last_name ? ' ' + user.last_name : '');
+  document.getElementById("profileUsername").innerText = '@' + user.username;
+  document.getElementById("profilePhoto").src = user.photo_url || 'default_avatar.png';
+
+  fetch(`/api/user/${user.id}`)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("profileLevel").innerText = 'Уровень: ' + data.level;
+      document.getElementById("profileExperience").innerText = 'Опыт: ' + data.experience + 'XP';
+      document.getElementById("profileAchievements").innerText = 'Достижения: ' + data.achievements.join(', ');
+      document.getElementById("profileSubscriptionStatus").innerText =
+      data.subscription_active
+        ? 'Подписка активна ✅'
+        : 'Подписка не активна ❌';
+    })
+    .catch(error => {
+      console.error('Ошибка при получении данных пользователя:', error);
+    });
+
+  modal.style.display = "block";
+}
+
+function buySubscription() {
+    const confirmBtn = document.getElementById("confirmSubscriptionBtn");
+    confirmBtn.style.display = "inline-block"; // Показываем кнопку подтверждения
+    const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe?.user;
+    if (!user) return alert("Ошибка: пользователь не найден.");
+
+    fetch(`/api/user/${user.id}/subscribe`, {
+      method: 'POST'
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("Подписка успешно активирована!");
+          document.getElementById("profileSubscriptionStatus").innerText = 'Подписка активна ✅';
+        } else {
+          alert(data.message || "Не удалось купить подписку.");
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка при покупке подписки:", err);
+        alert("Произошла ошибка.");
+      });
+  }
+  
+    function closeProfile() {
+      document.getElementById("profileModal").style.display = "none";
+    }
+  
+    // Закрытие модального окна при клике вне его
+    window.onclick = function(event) {
+      const modal = document.getElementById("profileModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function confirmSubscription() {
+  const tg = window.Telegram.WebApp;
+  const user = tg.initDataUnsafe?.user;
+  if (!user) return alert("Ошибка: пользователь не найден.");
+
+  fetch(`/api/user/${user.id}/subscribe`, {
+    method: 'POST'
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Подписка успешно активирована!");
+        document.getElementById("profileSubscriptionStatus").innerText = 'Подписка активна ✅';
+        document.getElementById("confirmSubscriptionBtn").style.display = "none"; // Скрываем кнопку после активации
+      } else {
+        alert(data.message || "Не удалось купить подписку.");
+      }
+    })
+    .catch(err => {
+      console.error("Ошибка при покупке подписки:", err);
+      alert("Произошла ошибка.");
+    });
+}
+  </script>
+  <script>
+    function checkSubscriptionAccess() {
+      const tg = window.Telegram.WebApp;
+      const user = tg.initDataUnsafe?.user;
+    
+      if (!user) {
+        alert("Пожалуйста, откройте приложение через Telegram и войдите.");
+        return;
+      }
+    
+      fetch(`/api/user/${user.id}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.subscription_active) {
+            window.location.href = 'course2.html';  // путь к закрытому курсу
+          } else {
+            alert("Этот курс доступен только по подписке TeachPremium. Купите подписку, чтобы продолжить.");
+          }
+        })
+        .catch(error => {
+          console.error('Ошибка при проверке подписки:', error);
+          alert("Не удалось проверить подписку. Повторите позже.");
+        });
+    }
+    function updateCourseProgress(courseId, totalTasks) {
+  fetch(`/get_completed_tasks?courseId=${courseId}`)
+    .then(response => response.json())
+    .then(data => {
+      const completedTasks = data.completedTasks || [];
+      const courseTasks = completedTasks.filter(taskId => taskId.startsWith(courseId));
+      const percent = Math.round((courseTasks.length / totalTasks) * 100);
+
+      const progressBar = document.getElementById('progress-' + courseId);
+      if (progressBar) {
+        progressBar.style.width = percent + '%';
+        progressBar.innerText = percent + '%';
+      }
+    })
+    .catch(error => {
+      console.error('Ошибка при обновлении прогресса:', error);
+    });
+};
+
+function showAchievementToast(title) {
+  const toast = document.getElementById("achievement-toast");
+  toast.innerHTML = `🏆 Новое достижение: <strong>${title}</strong><br>Загляни в профиль.`;
+  toast.classList.remove("hidden");
+  setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 4000);
+}
+
+// После получения ответа от API
+fetch('/api/update_level', {
+  method: 'POST',
+  body: JSON.stringify({ user_id: currentUserId }),
+  headers: { 'Content-Type': 'application/json' }
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.new_achievements && data.new_achievements.length > 0) {
+      data.new_achievements.forEach(title => showAchievementToast(title));
+    }
+  });
+    </script>
+
+    
+    
+</body>
+</html>
