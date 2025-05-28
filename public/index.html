@@ -1,27 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <style id="theme-style"></style>
   
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-  updateCourseProgress('task-1', 3); // если 5 заданий
-});
-    window.addEventListener('DOMContentLoaded', () => {
-      if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.ready();
-      } else {
-        alert("Откройте приложение через Telegram.");
-      }
-    });
-  </script>
-  <script>
-    if (window.Telegram && window.Telegram.WebApp) {
-      Telegram.WebApp.ready();
-    } else {
-      console.warn("Telegram WebApp API не доступен.");
-    }
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -78,7 +59,7 @@
     .img_2 {
       width: 35%;
       position: absolute;
-      top: -5px;
+      top: 33px;
       right: 0px;
     }
 
@@ -202,22 +183,145 @@
   border-radius: 15px 0 0 15px;
   transition: width 0.4s ease-in-out;
 }
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0.95;
+  transition: opacity 0.5s ease-in-out;
+}
+.toast.hidden {
+  display: none;
+}
+.league-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background-color: #ccc; /* Цвет будет обновляться через JS */
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 10px;
+}
   </style>
+
+<script>
+function isDark(hexColor) {
+  const r = parseInt(hexColor.substr(1, 2), 16);
+  const g = parseInt(hexColor.substr(3, 2), 16);
+  const b = parseInt(hexColor.substr(5, 2), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 128;
+}
+
+function applyTheme() {
+  const tg = window.Telegram.WebApp;
+  const theme = tg.themeParams || {};
+  const secondaryBgColor = theme.secondary_bg_color || '#ffffff';
+
+  if (!isDark(secondaryBgColor)) return;
+
+  const textColor = theme.text_color || '#ffffff';
+  const hintColor = theme.hint_color || '#999999';
+  const linkColor = theme.link_color || '#0000ee';
+  const buttonColor = theme.button_color || '#C8F7FF';
+  const buttonTextColor = theme.button_text_color || '#000';
+
+  const style = `
+    .card {
+      background: ${secondaryBgColor} !important;
+      color: ${textColor} !important;
+    }
+    .card h1, .card h2, .card a {
+      color: ${textColor} !important;
+    }
+    .footer {
+      background-color: ${secondaryBgColor} !important;
+    }
+    .footer .dom-btn,
+    .footer .dom {
+      background: none !important;
+      filter: none !important;
+    }
+    .modal-content {
+      background-color: ${secondaryBgColor} !important;
+      color: ${textColor} !important;
+    }
+    .toast {
+      background-color: ${hintColor} !important;
+    }
+    .card a {
+      color: ${linkColor} !important;
+    }
+button:not(.dom-btn):not(.nfi-help) {
+  background-color: ${buttonColor} !important;
+  color: ${buttonTextColor} !important;
+}
+  `;
+
+  document.getElementById('theme-style').innerHTML = style;
+}
+
+
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      applyTheme(); // вызываем функцию для применения темы
+    } else {
+      alert("Откройте приложение через Telegram.");
+    }
+  });
+</script>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+updateCourseProgress('task-1', 3); // если 5 заданий
+});
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+    } else {
+      alert("Откройте приложение через Telegram.");
+    }
+  });
+</script>
+<script>
+  if (window.Telegram && window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
+  } else {
+    console.warn("Telegram WebApp API не доступен.");
+  }
+</script>  
 </head>
 <body>
   <div class="content">
     <h1 class="nfi">Все курсы</h1>
+    <button class="nfi-help" onclick="openHelpModal()" style="background: none; border: none; cursor: pointer;">
+      <img src="https://cdn-icons-png.flaticon.com/512/271/271210.png" alt="?" style="width: 24px; height: 24px;">
+    </button>
 
     <div class="card">
       <img src="chelblya.png" alt="Курс 1" class="img_1">
-      <h1>Введение в нейросети и ИИ</h1>
+      <h1>Базовый курс "Нейросети и ИИ"</h1>
       <h2>@cmsxkl</h2>
-      <a href="#" onclick="window.location.href = 'courses.html'">Начать курс</a>
+      <a href="#" onclick="window.location.href = 'learn.html'">Начать курс</a>
     </div>
 
     <div class="card">
       <img src="chelikblya.png" alt="Курс 2" class="img_2">
-      <h1>Типы нейросетей</h1>
+      <h1>Углубленный курс "Нейросети и ИИ"</h1>
       <h2>@cmsxkl</h2>
       <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
       <h2>Только по подписке</h2>
@@ -225,7 +329,7 @@
 
     <div class="card">
       <img src="chelikblya.png" alt="Курс 2" class="img_3">
-      <h1>Как использовать нейросети в повседневной жизни</h1>
+      <h1>Pro-Курс "Нейросети и ИИ"</h1>
       <h2>@cmsxkl</h2>
       <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
       <h2>Только по подписке</h2>
@@ -248,19 +352,41 @@
       <img src="ai.png" alt="Промпт" class="dom">
     </button>
 
+
     
-  
+   <!-- модалка помощи-->
+   <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeHelpModal()">&times;</span>
+      <h2>Справка по интерфейсу</h2>
+      <p><strong><img src="https://cdn-icons-png.flaticon.com/512/271/271210.png" alt="?" style="width: 5%; height: 5%; background-color: white;"> Помощь:</strong> открывает это окно.</p>
+      <p><strong>Начать курс:</strong> открывает выбранный курс.</p>
+      <p><strong>Иконка: <img style="width: 8%; height: 8%;" src="domik.png" alt="Профиль" class="dom"></strong>открывает ваш профиль</p>
+      <p><strong>Иконка: <img style="width: 8%; height: 8%;" src="leaderboard.png" alt="Лидеры" class="dom"> </strong>переключает вас на раздел "Таблица Лидеров"</p>
+      <p><strong>Иконка: <img style="width: 8%; height: 8%;" src="ai.png" alt="Лидеры" class="dom"> </strong>переключает вас на раздел "Общаемся с ИИ"</p>
+    </div>
+  </div>
     <!-- Модалка профиля -->
     <div id="profileModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeProfile()">&times;</span>
         <div class="profile-info">
-        
-          <img id="profilePhoto" src="" alt="Аватар" class="avatar">
+          <div style="margin-top: 15px;">
+            <label id="leagueProgressLabel" style="font-weight: bold;">Прогресс до следующей лиги:</label>
+            <div style="background: #eee; border-radius: 10px; height: 20px; overflow: hidden;">
+              <div id="leagueProgress" style="height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+            </div>
+          </div>
+          </div>
+          <img style="margin-top: 15px; width: 35%; height: 35%;" id="profilePhoto" src="" alt="Аватар" class="avatar">
           <h2 id="profileName"></h2>
           <p id="profileUsername"></p>
           <p id="profileLevel"></p>
           <p id="profileExperience"></p>
+          <div id="profileLeague" class="league-badge" style="display: none;">
+            <span id="leagueEmoji"></span>
+            <span id="leagueName"></span>
+          </div>
           <p id="profileAchievements"></p>
           <p id="profileSubscriptionStatus"></p>
           <button onclick="buySubscription()" style="margin-top: 10px; background-color: #C8F7FF; color: rgb(0, 0, 0); border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer;">Купить подписку за ⭐ 320</button>
@@ -270,16 +396,19 @@
     </div>
   </div>
 
+
+  <div id="achievement-toast" class="toast hidden"></div>
+
 <script>
-    function openProfile() {
-      console.log("Кнопка нажата");
-      if (!window.Telegram || !window.Telegram.WebApp) {
+  function openProfile() {
+  console.log("Кнопка нажата");
+
+  if (!window.Telegram || !window.Telegram.WebApp) {
     alert("Telegram WebApp не инициализирован. Откройте через Telegram.");
     return;
   }
-  const modal = document.getElementById("profileModal");
-  // Инициализация
 
+  const modal = document.getElementById("profileModal");
   const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe?.user;
 
@@ -300,9 +429,52 @@
       document.getElementById("profileExperience").innerText = 'Опыт: ' + data.experience + 'XP';
       document.getElementById("profileAchievements").innerText = 'Достижения: ' + data.achievements.join(', ');
       document.getElementById("profileSubscriptionStatus").innerText =
-      data.subscription_active
-        ? 'Подписка активна ✅'
-        : 'Подписка не активна ❌';
+        data.subscription_active ? 'Подписка активна ✅' : 'Подписка не активна ❌';
+
+      // 🎖 Отображение лиги
+      const leagueBadge = document.getElementById("profileLeague");
+  if (data.league) {
+    leagueBadge.style.display = "inline-flex";
+    document.getElementById("leagueEmoji").textContent = data.league.emoji;
+    document.getElementById("leagueName").textContent = data.league.name;
+    leagueBadge.style.backgroundColor = data.league.color;
+  } else {
+    leagueBadge.style.display = "none";
+  }
+
+      // 📊 Прогресс до следующей лиги
+      const leagues = [
+        { name: "Искатели Искры", emoji: "🪙", color: "#a58c6f", min: 1, max: 4 },
+        { name: "Подмастерья Промптов", emoji: "🧱", color: "#bb7e5d", min: 5, max: 9 },
+        { name: "Архитекторы Разума", emoji: "⚙️", color: "#6b7b8c", min: 10, max: 19 },
+        { name: "Владыки Моделей", emoji: "🧠", color: "#a9a9a9", min: 20, max: 34 },
+        { name: "Создатели Сознаний", emoji: "🔥", color: "#f4c542", min: 35, max: 49 },
+        { name: "Легенды ИИ", emoji: "💎", color: "#4ecdc4", min: 50, max: 64 },
+        { name: "Сингулярности", emoji: "🌀", color: "#9c27b0", min: 65, max: 75 }
+      ];
+
+      const level = data.level;
+      const currentLeague = leagues.find(l => level >= l.min && level <= l.max);
+      const nextLeague = leagues.find(l => level < l.min);
+
+      const progressElement = document.getElementById("leagueProgress");
+      const progressLabel = document.getElementById("leagueProgressLabel");
+
+      if (progressElement && currentLeague) {
+  if (nextLeague) {
+    const range = nextLeague.min - currentLeague.min;
+    const progress = level - currentLeague.min;
+    const percent = Math.min(100, (progress / range) * 100);
+
+    progressElement.style.width = percent + "%";
+    progressElement.style.backgroundColor = nextLeague.color; // Цвет будущей лиги
+    progressLabel.innerText = `До "${nextLeague.name}": ${nextLeague.min - level} уровней`;
+  } else {
+    progressElement.style.width = "100%";
+    progressElement.style.backgroundColor = currentLeague.color;
+    progressLabel.innerText = `Ты достиг вершины!`;
+  }
+}
     })
     .catch(error => {
       console.error('Ошибка при получении данных пользователя:', error);
@@ -310,6 +482,7 @@
 
   modal.style.display = "block";
 }
+
 
 function buySubscription() {
     const confirmBtn = document.getElementById("confirmSubscriptionBtn");
@@ -388,7 +561,7 @@ function buySubscription() {
           if (data.subscription_active) {
             window.location.href = 'course2.html';  // путь к закрытому курсу
           } else {
-            alert("Этот курс доступен только по подписке. Купите подписку, чтобы продолжить.");
+            alert("Этот курс доступен только по подписке TeachPremium. Купите подписку, чтобы продолжить.");
           }
         })
         .catch(error => {
@@ -414,7 +587,43 @@ function buySubscription() {
       console.error('Ошибка при обновлении прогресса:', error);
     });
 };
+
+function showAchievementToast(title) {
+  const toast = document.getElementById("achievement-toast");
+  toast.innerHTML = `🏆 Новое достижение: <strong>${title}</strong><br>Загляни в профиль.`;
+  toast.classList.remove("hidden");
+  setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 4000);
+}
+
+// После получения ответа от API
+fetch('/api/update_level', {
+  method: 'POST',
+  body: JSON.stringify({ user_id: currentUserId }),
+  headers: { 'Content-Type': 'application/json' }
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.new_achievements && data.new_achievements.length > 0) {
+      data.new_achievements.forEach(title => showAchievementToast(title));
+    }
+  });
     </script>
+<script>
+  function openHelpModal() {
+    document.getElementById('helpModal').style.display = 'block';
+  }
+  function closeHelpModal() {
+    document.getElementById('helpModal').style.display = 'none';
+  }
+  window.onclick = function(event) {
+    const modal = document.getElementById('helpModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  }
+  </script>
     
     
 </body>
