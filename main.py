@@ -16,7 +16,7 @@ import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 CACHE_DIR = "cache"
-CACHE_EXPIRATION_TIME = 3600   # 1 HOURS
+CACHE_EXPIRATION_TIME = 3599   # 1 HOURS
 
 
 
