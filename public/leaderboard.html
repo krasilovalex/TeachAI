@@ -1,97 +1,80 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style id="theme-style"></style>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Таблица лидеров — Prompt School</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Анализ промпта</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style id="theme-style"></style>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', sans-serif;
-      background-color: #C8F7FF;
-      color: #333;
+    * {
+      box-sizing: border-box;
     }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 30px 20px 100px;
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #C8F7FF;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
     }
 
     h1 {
-      font-size: 24px;
-      margin-bottom: 5px;
-      font-weight: 700;
-    }
-
-    .description {
-      color: #555;
+      text-align: center;
+      font-size: 20px;
       margin-bottom: 20px;
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .filters input, .filters select {
-      padding: 6px 10px;
-      font-size: 15px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      font-family: inherit;
-    }
-
-    .leaderboard {
+    .card {
+      background-color: #fff;
+      border-radius: 25px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 15px;
     }
 
-    .leaderboard-entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-family: 'Montserrat', sans-serif;
     }
 
-    .rank {
-      width: 36px;
-      font-weight: bold;
+    button {
+      padding: 10px;
       font-size: 16px;
+      background-color: #4ecdc4;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
     }
 
-  .username {
-  flex: 1;
-  font-weight: 600;
-  margin-left: 5px;
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-}
+    button:hover {
+      background-color: #3bbcb2;
+    }
 
-    .level, .exp {
-      min-width: 80px;
-      text-align: right;
-      font-size: 12px;
-      padding : 5px;
-      color: #333;
+    .result {
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      white-space: pre-wrap;
     }
 
     .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
+      margin-top: auto;
       height: 80px;
       background-color: #fff;
       border-radius: 25px 25px 0 0;
@@ -103,7 +86,11 @@
     .dom-btn {
       background: none;
       border: none;
+      padding: 0;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .dom {
@@ -111,191 +98,145 @@
       width: auto;
     }
 
-    .error-message {
-      text-align: center;
-      color: red;
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #323232;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 1000;
+      opacity: 0.95;
+      transition: opacity 0.5s ease-in-out;
     }
 
-    @media (max-width: 480px) {
-      .level, .exp {
-        font-size: 13px;
-        min-width: 70px;
-      }
+    .toast.hidden {
+      display: none;
     }
   </style>
   <script>
-    function isDark(hexColor) {
-      const r = parseInt(hexColor.substr(1, 2), 16);
-      const g = parseInt(hexColor.substr(3, 2), 16);
-      const b = parseInt(hexColor.substr(5, 2), 16);
-      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      return brightness < 128;
-    }
-    
-    function applyTheme() {
-  const tg = window.Telegram && window.Telegram.WebApp;
+     function applyTheme() {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (!tg || tg.colorScheme === 'light') return; // Не применять стили для светлой темы
 
-  if (!tg) {
-    document.getElementById('theme-style').innerHTML = '';
-    document.body.innerHTML = '<p style="text-align:center;padding:2rem;font-size:1.2rem;">Откройте приложение через Telegram для корректной работы</p>';
-    return;
+    const theme = tg.themeParams || {};
+    const textColor = theme.text_color || '#000000';
+    const hintColor = theme.hint_color || '#888888';
+
+    const style = `
+      body {
+        background-color: #C8F7FF !important;
+        color: ${textColor} !important;
+      }
+      h1, p, label, .result, button {
+        color: black !important;
+      }
+      .card, .footer {
+        background-color: black !important;
+        color: ${textColor} !important;
+      }
+      textarea {
+        background-color: black !important;
+        color: #fff !important;
+        border: 1px solid ${hintColor} !important;
+      }
+      .result {
+        background-color: black !important;
+        color: #fff !important;
+      }
+      .toast {
+        background-color: #323232 !important;
+        color: #fff !important;
+      }
+    `;
+    document.getElementById('theme-style').innerHTML = style;
   }
 
-  const theme = tg.themeParams || {};
-  const textColor = theme.text_color || '#000000';
-  const hintColor = theme.hint_color || '#999999';
-  const bgColor = '#C8F7FF'; // фиксированный фон
-
-  const style = `
-    body {
-      background-color: ${bgColor} !important;
-      color: ${textColor} !important;
-    }
-    h1, p, label {
-      color: black ;
-    }
-    .description {
-      color: ${hintColor} !important;
-    }
-    .filters input, .filters select {
-      background-color: ${bgColor} !important;
-      color: black !important;
-      border: 1px solid ${hintColor} !important;
-    }
-    .leaderboard-entry {
-      background-color: ${theme.bg_color || '#fff'} !important;
-      color: ${textColor} !important;
-    }
-    .footer {
-      background-color: ${theme.bg_color || '#ffffff'} !important;
-    }
-    .level, .exp, .username {
-      color: ${textColor} !important;
-    }
-    .error-message {
-      color: red !important;
-    }
-  `;
-
-  document.getElementById('theme-style').innerHTML = style;
-}
-
-
-    
-    
-    </script>
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        if (window.Telegram && window.Telegram.WebApp) {
-          Telegram.WebApp.ready();
-          applyTheme(); // вызываем функцию для применения темы
-        } else {
-          alert("Откройте приложение через Telegram.");
-        }
-      });
-    </script>
+    window.onload = applyTheme;
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        applyTheme();
+      } else {
+        alert("Откройте приложение через Telegram.");
+      }
+    });
+  </script>
 </head>
 <body>
-  <div class="container">
-    <h1 class="table">🏆 Таблица лидеров</h1>
-    <p class="description">Топ пользователей по уровню и опыту</p>
-
-    <div class="filters">
-      <label>
-        Мин. уровень:
-        <input type="number" id="minLevel" value="1" min="0"/>
-      </label>
-      <label>
-        Кол-во участников:
-        <select id="limit">
-          <option class="tab" value="10">Топ 10</option>
-          <option class="tab" value="25" selected>Топ 25</option>
-          <option class="tab" value="50">Топ 50</option>
-          <option class="tab" value="100">Топ 100</option>
-        </select>
-      </label>
-    </div>
-
-    <div id="leaderboard" class="leaderboard"></div>
+  <h1>Общение с ИИ</h1>
+  <div class="card">
+    <textarea id="promptInput" placeholder="Введите ваш промпт..."></textarea>
+    <button onclick="analyzePrompt()">Анализировать</button>
+    <div id="result" class="result" style="display:none;"></div>
   </div>
 
   <div class="footer">
-    <button class="dom-btn" onclick="goHome()" title="Домой">
+    <button class="dom-btn" onclick="window.location.href='index.html'" title="Назад">
       <img src="domik.png" alt="Домой" class="dom">
     </button>
   </div>
+  <div id="achievement-toast" class="toast hidden"></div>
 
   <script>
-    let allUsers = [];
+    let user_id = null;
 
-    async function fetchLeaderboard() {
-      try {
-        const res = await fetch('/api/leaderboard');
-        allUsers = await res.json();
-        applyFilters();
-      } catch (e) {
-        document.getElementById('leaderboard').innerHTML =
-          '<p class="error-message">Ошибка загрузки данных.</p>';
-        console.error(e);
+    window.addEventListener('DOMContentLoaded', () => {
+      const tg = window.Telegram.WebApp;
+      const user = tg.initDataUnsafe?.user;
+
+      if (user && user.id) {
+        user_id = user.id.toString();
+        console.log("User ID из Telegram:", user_id);
+      } else {
+        alert("Ошибка: Не удалось получить user_id из Telegram WebApp.");
       }
-    }
+    });
 
-    function applyFilters() {
-      const minLevel = parseInt(document.getElementById('minLevel').value) || 0;
-      const limit = parseInt(document.getElementById('limit').value);
-      const filtered = allUsers
-        .filter(user => user.level >= minLevel)
-        .sort((a, b) => b.level - a.level || b.experience - a.experience)
-        .slice(0, limit);
+    async function analyzePrompt() {
+      const prompt = document.getElementById('promptInput').value;
+      if (!prompt.trim()) return alert("Введите текст промпта.");
 
-      const container = document.getElementById('leaderboard');
-      container.innerHTML = '';
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p>Нет подходящих участников.</p>';
+      if (!user_id) {
+        alert("Ошибка: user_id не получен из Telegram.");
         return;
       }
 
-      const leagueColors = {
-  "Искатели Искры": "#a58c6f",
-  "Подмастерья Промптов": "#bb7e5d",
-  "Архитекторы Разума": "#6b7b8c",
-  "Владыки Моделей": "#a9a9a9",
-  "Создатели Сознаний": "#f4c542",
-  "Легенды ИИ": "#4ecdc4",
-  "Сингулярности": "#9c27b0",
-};
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = 'Загрузка...';
 
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            user_id: user_id
+          })
+        });
 
-filtered.forEach((user, index) => {
-  const leagueName = user.league?.name || '';
-  const leagueColor = leagueColors[leagueName] || '#777'; // по умолчанию серый
-
-  const div = document.createElement('div');
-  div.className = 'leaderboard-entry';
-  div.innerHTML = `
-  <span class="rank">#${index + 1}</span>
-  <span class="username">
-    ${user.username}
-    <span style="font-size: 10px; margin-left: 4px; color: ${leagueColor};">
-      ${user.league?.emoji || ''} ${leagueName}
-    </span>
-  </span>
-  <span class="level">Lvl ${user.level}</span>
-  <span class="exp">${user.experience} XP</span>
-`;
-container.appendChild(div);
-});
+        const data = await response.json();
+        resultDiv.textContent = data.analysis || data.error || "Нет результата.";
+      } catch (error) {
+        resultDiv.textContent = "Ошибка при анализе промпта.";
+        console.error(error);
+      }
     }
 
-    function goHome() {
-      window.location.href = "index.html";
+    function showAchievementToast(title) {
+      const toast = document.getElementById("achievement-toast");
+      toast.innerHTML = `🏆 Новое достижение: <strong>${title}</strong><br>Загляни в профиль.`;
+      toast.classList.remove("hidden");
+      setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 4000);
     }
-
-    document.getElementById('minLevel').addEventListener('input', applyFilters);
-    document.getElementById('limit').addEventListener('change', applyFilters);
-
-    fetchLeaderboard();
   </script>
 </body>
 </html>
