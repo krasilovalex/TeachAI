@@ -161,37 +161,44 @@
 
     if (!isDarkMode) return;
 
-    const textColor = theme.text_color || '#000000';
+    const textColor = theme.text_color || '#ffffff';
     const hintColor = theme.hint_color || '#999999';
-    const linkColor = theme.link_color || '#0000ee';
-    const buttonColor = theme.button_color || '#C8F7FF';
-    const buttonTextColor = theme.button_text_color || '#000';
+    const linkColor = theme.link_color || '#64b5f6';
+    const buttonColor = theme.button_color || '#ffffff';
+    const buttonTextColor = theme.button_text_color || '#000000';
 
     const style = `
-      body, .footer {
+      body, h1, h2, h3, p, ul, li, .nav-buttons a, .block-title {
         color: ${textColor} !important;
       }
-      .lesson-title, .modal-header h5, .card-title, .nav-title {
-        color: ${textColor} !important;
-      }
-      .modal-content {
+
+      .modal-content:not([style*="background:#C8F7FF"]) {
         background-color: ${theme.secondary_bg_color} !important;
         color: ${textColor} !important;
       }
-      .btn, button {
+
+      .btn, button:not([style*="background:#C8F7FF"]) {
         background-color: ${buttonColor} !important;
         color: ${buttonTextColor} !important;
       }
+
       a {
         color: ${linkColor} !important;
       }
+
       .toast {
         background-color: ${hintColor} !important;
         color: ${textColor} !important;
       }
     `;
 
-    document.getElementById('theme-style').innerHTML = style;
+    let styleTag = document.getElementById('theme-style');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'theme-style';
+      document.head.appendChild(styleTag);
+    }
+    styleTag.innerHTML = style;
   }
 
   window.addEventListener('DOMContentLoaded', applyTheme);
