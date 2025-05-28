@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style id="theme-style"></style>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Таблица лидеров — Prompt School</title>
@@ -69,12 +70,14 @@
       font-size: 16px;
     }
 
-    .username {
-      flex: 1;
-      font-weight: 600;
-      margin-left: 5px;
-      font-size: 12px;
-    }
+  .username {
+  flex: 1;
+  font-weight: 600;
+  margin-left: 5px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
 
     .level, .exp {
       min-width: 80px;
@@ -120,10 +123,81 @@
       }
     }
   </style>
+  <script>
+    function isDark(hexColor) {
+      const r = parseInt(hexColor.substr(1, 2), 16);
+      const g = parseInt(hexColor.substr(3, 2), 16);
+      const b = parseInt(hexColor.substr(5, 2), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness < 128;
+    }
+    
+    function applyTheme() {
+  const tg = window.Telegram && window.Telegram.WebApp;
+
+  if (!tg) {
+    document.getElementById('theme-style').innerHTML = '';
+    document.body.innerHTML = '<p style="text-align:center;padding:2rem;font-size:1.2rem;">Откройте приложение через Telegram для корректной работы</p>';
+    return;
+  }
+
+  const theme = tg.themeParams || {};
+  const textColor = theme.text_color || '#000000';
+  const hintColor = theme.hint_color || '#999999';
+  const bgColor = '#C8F7FF'; // фиксированный фон
+
+  const style = `
+    body {
+      background-color: ${bgColor} !important;
+      color: ${textColor} !important;
+    }
+    h1, p, label {
+      color: black ;
+    }
+    .description {
+      color: ${hintColor} !important;
+    }
+    .filters input, .filters select {
+      background-color: ${bgColor} !important;
+      color: black !important;
+      border: 1px solid ${hintColor} !important;
+    }
+    .leaderboard-entry {
+      background-color: ${theme.bg_color || '#fff'} !important;
+      color: ${textColor} !important;
+    }
+    .footer {
+      background-color: ${theme.bg_color || '#ffffff'} !important;
+    }
+    .level, .exp, .username {
+      color: ${textColor} !important;
+    }
+    .error-message {
+      color: red !important;
+    }
+  `;
+
+  document.getElementById('theme-style').innerHTML = style;
+}
+
+
+    
+    
+    </script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        if (window.Telegram && window.Telegram.WebApp) {
+          Telegram.WebApp.ready();
+          applyTheme(); // вызываем функцию для применения темы
+        } else {
+          alert("Откройте приложение через Telegram.");
+        }
+      });
+    </script>
 </head>
 <body>
   <div class="container">
-    <h1>🏆 Таблица лидеров</h1>
+    <h1 class="table">🏆 Таблица лидеров</h1>
     <p class="description">Топ пользователей по уровню и опыту</p>
 
     <div class="filters">
@@ -134,10 +208,10 @@
       <label>
         Кол-во участников:
         <select id="limit">
-          <option value="10">Топ 10</option>
-          <option value="25" selected>Топ 25</option>
-          <option value="50">Топ 50</option>
-          <option value="100">Топ 100</option>
+          <option class="tab" value="10">Топ 10</option>
+          <option class="tab" value="25" selected>Топ 25</option>
+          <option class="tab" value="50">Топ 50</option>
+          <option class="tab" value="100">Топ 100</option>
         </select>
       </label>
     </div>
@@ -182,15 +256,36 @@
         return;
       }
 
-      filtered.forEach((user, index) => {
-        const div = document.createElement('div');
-        div.className = 'leaderboard-entry';
-        div.innerHTML = `<span class="rank">#${index + 1}</span>
-                         <span class="username">${user.username}</span>
-                         <span class="level">Lvl ${user.level}</span>
-                         <span class="exp">${user.experience} XP</span>`;
-        container.appendChild(div);
-      });
+      const leagueColors = {
+  "Искатели Искры": "#a58c6f",
+  "Подмастерья Промптов": "#bb7e5d",
+  "Архитекторы Разума": "#6b7b8c",
+  "Владыки Моделей": "#a9a9a9",
+  "Создатели Сознаний": "#f4c542",
+  "Легенды ИИ": "#4ecdc4",
+  "Сингулярности": "#9c27b0",
+};
+
+
+filtered.forEach((user, index) => {
+  const leagueName = user.league?.name || '';
+  const leagueColor = leagueColors[leagueName] || '#777'; // по умолчанию серый
+
+  const div = document.createElement('div');
+  div.className = 'leaderboard-entry';
+  div.innerHTML = `
+  <span class="rank">#${index + 1}</span>
+  <span class="username">
+    ${user.username}
+    <span style="font-size: 10px; margin-left: 4px; color: ${leagueColor};">
+      ${user.league?.emoji || ''} ${leagueName}
+    </span>
+  </span>
+  <span class="level">Lvl ${user.level}</span>
+  <span class="exp">${user.experience} XP</span>
+`;
+container.appendChild(div);
+});
     }
 
     function goHome() {
