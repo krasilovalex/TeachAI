@@ -4,6 +4,8 @@ import os
 from datetime import datetime, timedelta
 import logging
 from gigachat_api import query_gigachat_for_feedback
+import hashlib
+import time
 
 app = Flask(__name__, static_folder="public")
 DATA_FILE = 'user_history.json'
@@ -17,60 +19,117 @@ LEVEL_ACHIEVEMENTS = {
     15: "Архитектор Разума",
     20: "Мастер ИИ",
     25: "Повелитель Моделей",
-    30: "TeachAI: Легенда"
+    30: "TeachAI: Легенда",
+    35: "Алхимик Алгоритмов",
+    40: "Повелитель Знаний",
+    45: "Грандмастер Генерации",
+    50: "Создатель Сознаний",
+    55: "Навигатор Нейросетей",
+    60: "Вершитель Промптов",
+    65: "Демистификатор ИИ",
+    70: "Бессмертный Разума",
+    75: "TeachAI: Бессмертная Сингулярность"
 }
 
 LEVEL_THRESHOLDS = [
-    0,     # Уровень 1
-    100,   # Уровень 2
-    250,   # Уровень 3
-    450,   # Уровень 4
-    700,   # Уровень 5
-    950,   # Уровень 6
-    1150,  # Уровень 7
-    1300,  # Уровень 8
-    1400,  # Уровень 9
-    1500,  # Уровень 10
-    1700,  # Уровень 11
-    1900,  # Уровень 12
-    2150,  # Уровень 13
-    2400,  # Уровень 14
-    2700,  # Уровень 15
-    3000,  # Уровень 16
-    3400,  # Уровень 17
-    3800,  # Уровень 18
-    4200,  # Уровень 19
-    4600,  # Уровень 20
-    5100,  # Уровень 21
-    5600,  # Уровень 22
-    6200,  # Уровень 23
-    6800,  # Уровень 24
-    7500,  # Уровень 25
-    8200,  # Уровень 26
-    9000,  # Уровень 27
-    9800,  # Уровень 28
-    10700, # Уровень 29
-    11700  # Уровень 30
+     0,     # Уровень 1
+   350,     # Уровень 2
+   750,     # Уровень 3
+  1200,     # Уровень 4
+  1700,     # Уровень 5
+  2200,     # Уровень 6
+  2750,     # Уровень 7
+  3300,     # Уровень 8
+  3900,     # Уровень 9
+  4500,     # Уровень 10
+  5150,     # Уровень 11
+  5800,     # Уровень 12
+  6500,     # Уровень 13
+  7200,     # Уровень 14
+  7950,     # Уровень 15
+  8700,     # Уровень 16
+  9500,     # Уровень 17
+ 10300,     # Уровень 18
+ 11100,     # Уровень 19
+ 11950,     # Уровень 20
+ 12800,     # Уровень 21
+ 13700,     # Уровень 22
+ 14650,     # Уровень 23
+ 15600,     # Уровень 24
+ 16600,     # Уровень 25
+ 17600,     # Уровень 26
+ 18650,     # Уровень 27
+ 19700,     # Уровень 28
+ 20800,     # Уровень 29
+ 21900,     # Уровень 30
+ 23050,     # Уровень 31
+ 24200,     # Уровень 32
+ 25400,     # Уровень 33
+ 26600,     # Уровень 34
+ 27850,     # Уровень 35
+ 29100,     # Уровень 36
+ 30400,     # Уровень 37
+ 31700,     # Уровень 38
+ 33050,     # Уровень 39
+ 34400,     # Уровень 40
+ 35800,     # Уровень 41
+ 37200,     # Уровень 42
+ 38650,     # Уровень 43
+ 40100,     # Уровень 44
+ 41600,     # Уровень 45
+ 43100,     # Уровень 46
+ 44650,     # Уровень 47
+ 46200,     # Уровень 48
+ 47800,     # Уровень 49
+ 49400,     # Уровень 50
+ 51050,     # Уровень 51
+ 52700,     # Уровень 52
+ 54400,     # Уровень 53
+ 56100,     # Уровень 54
+ 57850,     # Уровень 55
+ 59600,     # Уровень 56
+ 61400,     # Уровень 57
+ 63200,     # Уровень 58
+ 65050,     # Уровень 59
+ 66900,     # Уровень 60
+ 68800,     # Уровень 61
+ 70700,     # Уровень 62
+ 72650,     # Уровень 63
+ 74600,     # Уровень 64
+ 76600,     # Уровень 65
+ 78600,     # Уровень 66
+ 80650,     # Уровень 67
+ 82700,     # Уровень 68
+ 84800,     # Уровень 69
+ 86900,     # Уровень 70
+ 89050,     # Уровень 71
+ 91200,     # Уровень 72
+ 93400,     # Уровень 73
+ 95600,     # Уровень 74
+ 97850      # Уровень 75
 ]
 
 def update_level(users, user_id):
     xp = users[user_id]['experience']
     current_level = users[user_id]['level']
-
-    # Индекс соответствует уровню (0 = уровень 1, 1 = уровень 2, ...)
     new_level = 1
+    new_achievements = []
+
     for i, threshold in enumerate(LEVEL_THRESHOLDS):
         if xp >= threshold:
-            new_level = i + 1  # i=0 -> уровень 1, i=1 -> уровень 2
+            new_level = i + 1
         else:
             break
 
     if new_level > current_level:
         users[user_id]['level'] = new_level
-        # Добавим достижения за новые уровни
+
         for lvl, achievement in LEVEL_ACHIEVEMENTS.items():
             if new_level >= lvl and achievement not in users[user_id]['achievements']:
                 users[user_id]['achievements'].append(achievement)
+                new_achievements.append(achievement)
+
+    return new_achievements  # 👈 Вернём список новых достижений
 
 def get_level_by_experience(exp):
     for i in reversed(range(len(LEVEL_THRESHOLDS))):
@@ -85,6 +144,7 @@ def get_user_id_by_username(username):
         if user_data.get('username') == username:
             return user_id
     return None
+
 
 @app.route('/courses/<username>')
 def courses(username):
@@ -114,30 +174,49 @@ def analyze_prompt():
         print("Абсолютный путь к DATA_FILE:", os.path.abspath(DATA_FILE))
         data = request.get_json()
         prompt = data.get('prompt', '').strip()
-        user_id = str(data.get('user_id'))  # приведение к строке — обязательно
+        user_id = str(data.get('user_id'))
 
         if not prompt:
             return jsonify({'error': 'Пустой промпт'}), 400
-
         if not user_id:
             return jsonify({'error': 'Не указан user_id'}), 400
 
-        # Загружаем пользователей
         users = load_users()
         print(users.keys())
 
         if user_id not in users:
             return jsonify({'error': f'Пользователь {user_id} не найден'}), 404
 
-        # Увеличиваем опыт
-        users[user_id]['experience'] += 20
+        # === АНТИСПАМ-ПРОВЕРКИ ===
 
+        # 1. Ограничение по частоте (30 секунд между запросами)
+        now = time.time()
+        last_time = users[user_id].get('last_prompt_time', 0)
+        if now - last_time < 10:
+            return jsonify({'error': 'Слишком часто! Подождите немного.'}), 429
+        users[user_id]['last_prompt_time'] = now
+
+        # 2. Проверка на минимальную длину промпта
+        if len(prompt) < 10:
+            return jsonify({'error': 'Промпт слишком короткий, минимум 10 символов.'}), 400
+
+        # 3. Проверка на повтор промпта
+        def hash_prompt(text):
+            return hashlib.sha256(text.encode()).hexdigest()
+        prompt_hash = hash_prompt(prompt)
+        last_prompt_hash = users[user_id].get('last_prompt_hash')
+        if last_prompt_hash == prompt_hash:
+            return jsonify({'error': 'Промпт повторяется, опыт не начислен.'}), 400
+        users[user_id]['last_prompt_hash'] = prompt_hash
+
+        # === Начисление опыта ===
+        users[user_id]['experience'] += 20
         update_level(users, user_id)
 
-        # Сохраняем обратно
+        # Сохраняем обновления
         save_users(users)
 
-        # Анализируем промпт (например, через GigaChat API)
+        # Анализ промпта (например, через GigaChat API)
         result = query_gigachat_for_feedback(prompt)
 
         return jsonify({'analysis': result})
@@ -145,21 +224,57 @@ def analyze_prompt():
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+    
+def get_user_league(level: int):
+    leagues = [
+        {"name": "Искатели Искры", "emoji": "🪙", "color": "#a58c6f", "min": 1, "max": 4},
+        {"name": "Подмастерья Промптов", "emoji": "🧱", "color": "#bb7e5d", "min": 5, "max": 9},
+        {"name": "Архитекторы Разума", "emoji": "⚙️", "color": "#6b7b8c", "min": 10, "max": 19},
+        {"name": "Владыки Моделей", "emoji": "🧠", "color": "#a9a9a9", "min": 20, "max": 34},
+        {"name": "Создатели Сознаний", "emoji": "🔥", "color": "#f4c542", "min": 35, "max": 49},
+        {"name": "Легенды ИИ", "emoji": "💎", "color": "#4ecdc4", "min": 50, "max": 64},
+        {"name": "Сингулярности", "emoji": "🌀", "color": "#9c27b0", "min": 65, "max": 75}
+    ]
+
+    for league in leagues:
+        if league["min"] <= level <= league["max"]:
+            return {
+                "name": league["name"],
+                "emoji": league["emoji"],
+                "color": league["color"]
+            }
+
+    return {
+        "league_name": "Неизвестная Лига",
+        "emoji": "❓",
+        "color": "#cccccc"
+    }
+
+
 
 @app.route('/api/user/<int:user_id>')
+
 def get_user_data(user_id):
     try:
         with open('user_history.json', 'r', encoding='utf-8') as f:
             users = json.load(f)
+
         user_data = users.get("users", {}).get(str(user_id))
         app.logger.info(f"Запрошен user_id: {user_id}")
+
         if user_data:
+            level = user_data.get('level', 1)
+            league = get_user_league(level)
+
+            # Добавляем лигу в ответ
+            user_data['league'] = league
             return jsonify(user_data)
         else:
             return jsonify({
                 'level': 1,
                 'experience': 0,
-                'achievements': []
+                'achievements': [],
+                'league': get_user_league(1)
             })
     except FileNotFoundError:
         return jsonify({'error': 'Файл user_history.json не найден'}), 500
@@ -168,7 +283,6 @@ def get_user_data(user_id):
     except Exception as e:
         app.logger.exception("Неожиданная ошибка")
         return jsonify({'error': str(e)}), 500
-
 @app.route('/api/leaderboard')
 def get_leaderboard():
     try:
@@ -181,16 +295,18 @@ def get_leaderboard():
                 "user_id": user_id,
                 "username": info.get("username", "unknown"),
                 "level": info.get("level", 0),
-                "experience": info.get("experience", 0)
+                "experience": info.get("experience", 0),
+                "league": get_user_league(info.get("level", 0))
             }
             for user_id, info in users.items()
         ]
+
         leaderboard.sort(key=lambda x: (-x["experience"], -x["level"]))
         return jsonify(leaderboard[:50])
+
     except Exception as e:
         app.logger.exception("Ошибка при создании таблицы лидеров")
         return jsonify({"error": str(e)}), 500
-    
 SUBSCRIPTION_COST = 500
 
 @app.route('/api/user/<int:user_id>/subscribe', methods=['POST'])
