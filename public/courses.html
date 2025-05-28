@@ -198,8 +198,14 @@
       button:not(.dom-btn):not(.nfi-help) {
       background-color: ${buttonColor} !important;
       color: ${buttonTextColor} !important;
-}
       
+}
+      .kurs {color:black;}
+    .footer .dom-btn,
+    .footer .dom {
+      background: none !important;
+      filter: none !important;
+    }      
     `;
 
     let styleTag = document.getElementById('theme-style');
@@ -218,7 +224,7 @@
 </head>
 <body>
 
-  <h1>🧠 Курс: Введение в нейросети и ИИ</h1>
+  <h1 class ="kurs">🧠 Курс: Введение в нейросети и ИИ</h1>
 
   <div class="module">
     <h2>Модуль 1: Введение в нейросети и ИИ</h2>
