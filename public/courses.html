@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <style id="theme-style"></style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Получаем данные от Telegram WebApp
         const tg = window.Telegram.WebApp;
@@ -143,6 +145,63 @@
 }
 
   </style>
+  <script>
+    function isDark(hexColor) {
+      const r = parseInt(hexColor.substr(1, 2), 16);
+      const g = parseInt(hexColor.substr(3, 2), 16);
+      const b = parseInt(hexColor.substr(5, 2), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness < 128;
+    }
+  
+    function applyTheme() {
+      const tg = window.Telegram.WebApp;
+      const theme = tg.themeParams || {};
+      const secondaryBgColor = theme.secondary_bg_color || '#ffffff';
+  
+      if (!isDark(secondaryBgColor)) return;
+  
+      const textColor = theme.text_color || '#ffffff';
+      const hintColor = theme.hint_color || '#999999';
+      const linkColor = theme.link_color || '#0000ee';
+      const buttonColor = theme.button_color || '#C8F7FF';
+      const buttonTextColor = theme.button_text_color || '#000';
+  
+      const style = `
+        body {
+          background-color: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .module, .lesson, .card, .modal-content {
+          background-color: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .lesson-title, .modal-header h5, .card-title, .nav-title {
+          color: ${textColor} !important;
+        }
+        .btn, button {
+          background-color: ${buttonColor} !important;
+          color: ${buttonTextColor} !important;
+        }
+        a {
+          color: ${linkColor} !important;
+        }
+        .footer {
+          background-color: ${secondaryBgColor} !important;
+          color: ${hintColor} !important;
+        }
+        .toast {
+          background-color: ${hintColor} !important;
+          color: ${textColor} !important;
+        }
+      `;
+  
+      document.getElementById('theme-style').innerHTML = style;
+    }
+  
+    window.addEventListener('DOMContentLoaded', applyTheme);
+  </script>
+  
 </head>
 <body>
 
