@@ -161,31 +161,30 @@
 
     if (!isDarkMode) return;
 
-    const textColor = theme.text_color || '#ffffff';
+    const textColor = theme.text_color || '#000000';
     const hintColor = theme.hint_color || '#999999';
-    const linkColor = theme.link_color || '#64b5f6';
-    const buttonColor = theme.button_color || '#ffffff';
-    const buttonTextColor = theme.button_text_color || '#000000';
+    const linkColor = theme.link_color || '#0000ee';
+    const buttonColor = theme.button_color || '#C8F7FF';
+    const buttonTextColor = theme.button_text_color || '#000';
 
     const style = `
-      body, .card, .footer, .card-title, .nav-title {
+      body, .footer {
         color: ${textColor} !important;
       }
-
+      .lesson-title, .modal-header h5, .card-title, .nav-title {
+        color: ${textColor} !important;
+      }
       .modal-content {
         background-color: ${theme.secondary_bg_color} !important;
         color: ${textColor} !important;
       }
-
       .btn, button {
         background-color: ${buttonColor} !important;
         color: ${buttonTextColor} !important;
       }
-
       a {
         color: ${linkColor} !important;
       }
-
       .toast {
         background-color: ${hintColor} !important;
         color: ${textColor} !important;
