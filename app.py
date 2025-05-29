@@ -227,7 +227,7 @@ def analyze_prompt():
     
 def get_user_league(level: int):
     leagues = [
-        {"name": "Искатели Искры", "emoji": "🪙", "color": "#a58c6f", "min": 1, "max": 4},
+        {"name": "Искатели Искры", "emoji": "🔥", "color": "#a58c6f", "min": 1, "max": 4},
         {"name": "Подмастерья Промптов", "emoji": "🧱", "color": "#bb7e5d", "min": 5, "max": 9},
         {"name": "Архитекторы Разума", "emoji": "⚙️", "color": "#6b7b8c", "min": 10, "max": 19},
         {"name": "Владыки Моделей", "emoji": "🧠", "color": "#a9a9a9", "min": 20, "max": 34},
@@ -410,47 +410,52 @@ def calculate_level(experience):
 
 @app.route('/api/complete-task', methods=['POST'])
 def complete_task():
-    try:
-        data = request.get_json()
-        user_id = str(data.get('user_id'))
-        task_id = data.get('task_id')
+    data = request.get_json()
+    user_id = str(data.get('user_id'))
+    task_id = data.get('task_id')
 
-        if not user_id or not task_id:
-            return jsonify({'success': False, 'message': 'user_id или task_id отсутствует'}), 400
+    if not user_id or not task_id:
+        return jsonify({"success": False, "message": "user_id или task_id не указаны"}), 400
 
-        users = load_users()
-        if user_id not in users:
-            return jsonify({'success': False, 'message': 'Пользователь не найден'}), 404
+    users = load_users()
 
-        user_data = users[user_id]
+    # Создаём пользователя, если его ещё нет
+    if user_id not in users:
+        users[user_id] = {
+            "username": "",
+            "progress": {
+                "completed_themes": [],
+                "tests_passed": 0,
+                "test_results": [],
+                "best_prompts": []
+            },
+            "level": 1,
+            "experience": 0,
+            "achievements": [],
+            "feedback": []
+        }
 
-        # Обязательно инициализируем поля
-        if 'completed_tasks' not in user_data:
-            user_data['completed_tasks'] = []
+    user = users[user_id]
 
-        if 'experience' not in user_data:
-            user_data['experience'] = 0
+    if task_id in user['progress'].get('completed_themes', []):
+        return jsonify({"success": True, "message": "Задача уже выполнена"}), 200
 
-        # Проверка на повтор
-        if task_id in user_data['completed_tasks']:
-            return jsonify({'success': False, 'message': 'Задача уже выполнена'}), 400
+    # Добавляем задачу и опыт
+    user['progress']['completed_themes'].append(task_id)
+    user['experience'] += 50
 
-        # Обновление данных
-        
-        user_data['completed_tasks'].append(task_id)
-        logging.info(f"[{user_id}] Before XP: {user_data.get('experience')}")
-        user_data['experience'] += 50
-        logging.info(f"[{user_id}] After XP: {user_data.get('experience')}")
+    # Обновляем уровень и получаем достижения
+    new_achievements = update_level(users, user_id)
 
-        update_level(users, user_id)  # важно, чтобы эта функция тоже меняла users[user_id]
+    save_user_data(users)
 
-        save_users(users)  # обязательно сохранить
+    return jsonify({
+        "success": True,
+        "message": "Опыт добавлен, задача отмечена",
+        "new_level": users[user_id]["level"],
+        "new_achievements": new_achievements
+    }), 200
 
-        return jsonify({'success': True})
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': str(e)}), 500
 @app.route('/api/get_completed_tasks', methods=['GET'])
 def get_completed_tasks():
     user_id = request.args.get('userId')  # передай userId с фронта
