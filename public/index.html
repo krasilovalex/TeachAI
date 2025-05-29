@@ -238,14 +238,14 @@ function applyTheme() {
 
   const style = `
     .card {
-      background: ${secondaryBgColor} !important;
+      background: #23282B !important;
       color: ${textColor} !important;
     }
     .card h1, .card h2, .card a {
       color: ${textColor} !important;
     }
     .footer {
-      background-color: ${secondaryBgColor} !important;
+      background-color: #23282B !important;;
     }
     .footer .dom-btn,
     .footer .dom {
@@ -338,7 +338,7 @@ updateCourseProgress('task-1', 3); // если 5 заданий
   </div>
   <div class="footer">
     <!-- Кнопка "Профиль" -->
-    <button class="dom-btn" onclick="openProfile()" title="Профиль">
+    <button class="dom-btn" onclick="window.location.href='profile.html'" title="Профиль">
       <img src="domik.png" alt="Профиль" class="dom">
     </button>
   
