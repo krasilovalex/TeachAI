@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv(as.env)
 
 IAM_TOKEN = os.getenv("IAM_TOKEN")
 FOLDER_ID = os.getenv("FOLDER_ID")
