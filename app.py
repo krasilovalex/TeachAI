@@ -512,7 +512,37 @@ def mark_task_complete():
     "new_achievements": new_achievements
     }), 200
 
+@app.route('/get_user_progress', methods=['POST'])
+def get_user_progress():
+    data = request.get_json()
+    user_id = str(data.get('user_id'))
 
+    users = load_users()
+    user = users.get(user_id)
+    if not user:
+        return jsonify({"success": False, "message": "Пользователь не найден"}), 404
+
+    # Пример: прогресс по каждому курсу
+    all_courses = {
+        "1": 15,  # курс 1 — 15 тем
+        "2": 10,  # курс 2 — 10 тем
+        "3": 20   # курс 3 — 20 тем
+    }
+
+    completed_themes = user.get("progress", {}).get("completed_themes", [])
+    course_progress = {}
+
+    for course_id, total in all_courses.items():
+        # Фильтруем темы, относящиеся к текущему курсу (например, "1-1", "1-2", ...)
+        completed = sum(1 for theme in completed_themes if theme.startswith(f"{course_id}-"))
+        percent = int((completed / total) * 100) if total else 0
+        course_progress[course_id] = {
+            "completed": completed,
+            "total": total,
+            "progress_percent": percent
+        }
+
+    return jsonify({"success": True, "courses": course_progress})
 
 
 
