@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style id="theme-style"></style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <title>Profile TeachAI</title>
+</head>
+<style>
+ * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #C8F7FF;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.card {
+  width: 90%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 25px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  text-align: center;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.progress-bar-container {
+  width: 100%;
+  background-color: #E0E0E0;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6DE1FF, #55C1FF);
+  text-align: center;
+  line-height: 20px;
+  color: #000;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 15px 0 0 15px;
+  transition: width 0.4s ease-in-out;
+}
+
+.league-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background-color: #ccc;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.card h2,
+.card p {
+  margin: 6px 0;
+  font-weight: 700;
+}
+
+.card button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  background-color: #6DE1FF;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.card button:hover {
+  background-color: #55C1FF;
+  transform: scale(1.05);
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0.95;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 25px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.footer {
+  width: 100%;
+  height: 80px;
+  background-color: #fff;
+  border-radius: 25px 25px 0 0;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dom-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dom-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.dom {
+  height: 40px;
+  width: auto;
+}
+
+  </style>
+<script>
+    function isDark(hexColor) {
+      const r = parseInt(hexColor.substr(1, 2), 16);
+      const g = parseInt(hexColor.substr(3, 2), 16);
+      const b = parseInt(hexColor.substr(5, 2), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness < 128;
+    }
+    
+    function applyTheme() {
+      const tg = window.Telegram.WebApp;
+      const theme = tg.themeParams || {};
+      const secondaryBgColor = theme.secondary_bg_color || '#ffffff';
+    
+      if (!isDark(secondaryBgColor)) return;
+    
+      const textColor = theme.text_color || '#ffffff';
+      const hintColor = theme.hint_color || '#999999';
+      const linkColor = theme.link_color || '#0000ee';
+      const buttonColor = theme.button_color || '#C8F7FF';
+      const buttonTextColor = theme.button_text_color || '#000';
+    
+      const style = `
+        .card {
+          background: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .card h1, .card h2, .card a {
+          color: ${textColor} !important;
+        }
+        .footer {
+          background-color: ${secondaryBgColor} !important;
+        }
+        .footer .dom-btn,
+        .footer .dom {
+          background: none !important;
+          filter: none !important;
+        }
+        .modal-content {
+          background-color: ${secondaryBgColor} !important;
+          color: ${textColor} !important;
+        }
+        .toast {
+          background-color: ${hintColor} !important;
+        }
+        .card a {
+          color: ${linkColor} !important;
+        }
+    button:not(.dom-btn):not(.nfi-help) {
+      background-color: ${buttonColor} !important;
+      color: ${buttonTextColor} !important;
+    }
+      `;
+    
+      document.getElementById('theme-style').innerHTML = style;
+    }
+    
+    
+    </script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        if (window.Telegram && window.Telegram.WebApp) {
+          Telegram.WebApp.ready();
+          applyTheme(); // вызываем функцию для применения темы
+        } else {
+          alert("Откройте приложение через Telegram.");
+        }
+      });
+    </script>  
+<body>
+    <div class="content">
+        <div class="card" style="max-width: 400px; text-align: center;">
+          <div class="profile-info">
+            <div style="margin-top: 15px;">
+              <label id="leagueProgressLabel" style="font-weight: bold;">Прогресс до следующей лиги:</label>
+              <div class="progress-bar-container">
+                <div id="leagueProgress" class="progress-bar" style="width: 0%;">0%</div>
+              </div>
+            </div>
+            <img id="profilePhoto" src="" alt="Аватар" class="avatar" style="margin-top: 15px;">
+            <h2 id="profileName"></h2>
+            <p id="profileUsername"></p>
+            <p id="profileLevel"></p>
+            <p id="profileExperience"></p>
+            <div id="profileLeague" class="league-badge">
+              <span id="leagueEmoji"></span>
+              <span id="leagueName"></span>
+            </div>
+            <p id="profileAchievements"></p>
+            <p id="profileSubscriptionStatus"></p>
+            <button onclick="buySubscription()">Купить подписку за ⭐ 320</button>
+            <button id="confirmSubscriptionBtn" onclick="confirmSubscription()" style="display: none;">Подтвердить подписку</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <!-- Кнопка "Профиль" -->
+    <button class="dom-btn" onclick="window.location.href='index.html'" title="Главная">
+        <img src="domik.png" alt="Профиль" class="dom">
+      </button>
+    
+      <!-- Кнопка "Лидеры" -->
+      <button class="dom-btn" onclick="window.location.href='leaderboard.html'" title="Лидеры" style="margin-left: 20px;">
+        <img src="leaderboard.png" alt="Лидеры" class="dom">
+      </button>
+  
+      <!-- Кнопка "Лидеры" -->
+      <button class="dom-btn" onclick="window.location.href='test_prompt.html'" title="Промпт" style="margin-left: 20px;">
+        <img src="ai.png" alt="Промпт" class="dom">
+      </button>
+      </div>
+ 
+      <script>
+        function openProfile() {
+          console.log("Кнопка нажата");
+        
+          if (!window.Telegram || !window.Telegram.WebApp) {
+            alert("Telegram WebApp не инициализирован. Откройте через Telegram.");
+            return;
+          }
+        
+          const tg = window.Telegram.WebApp;
+          const user = tg.initDataUnsafe?.user;
+        
+          if (!user) {
+            alert("Пользователь не авторизован через Telegram.");
+            return;
+          }
+        
+          // Отображение основных данных пользователя
+          document.getElementById("profileName").innerText =
+            user.first_name + (user.last_name ? ' ' + user.last_name : '');
+          document.getElementById("profileUsername").innerText = '@' + user.username;
+          document.getElementById("profilePhoto").src = user.photo_url || 'default_avatar.png';
+        
+          // Загрузка пользовательских данных с сервера
+          fetch(`/api/user/${user.id}`)
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById("profileLevel").innerText = 'Уровень: ' + data.level;
+              document.getElementById("profileExperience").innerText = 'Опыт: ' + data.experience + 'XP';
+              document.getElementById("profileAchievements").innerText = 'Достижения: ' + data.achievements.join(', ');
+              document.getElementById("profileSubscriptionStatus").innerText =
+                data.subscription_active ? 'Подписка активна ✅' : 'Подписка не активна ❌';
+        
+              // Лига пользователя
+              const leagueBadge = document.getElementById("profileLeague");
+              if (data.league) {
+                leagueBadge.style.display = "inline-flex";
+                document.getElementById("leagueEmoji").textContent = data.league.emoji;
+                document.getElementById("leagueName").textContent = data.league.name;
+                leagueBadge.style.backgroundColor = data.league.color;
+              } else {
+                leagueBadge.style.display = "none";
+              }
+        
+              // Прогресс до следующей лиги
+              const leagues = [
+                { name: "Искатели Искры", emoji: "🪙", color: "#a58c6f", min: 1, max: 4 },
+                { name: "Подмастерья Промптов", emoji: "🧱", color: "#bb7e5d", min: 5, max: 9 },
+                { name: "Архитекторы Разума", emoji: "⚙️", color: "#6b7b8c", min: 10, max: 19 },
+                { name: "Владыки Моделей", emoji: "🧠", color: "#a9a9a9", min: 20, max: 34 },
+                { name: "Создатели Сознаний", emoji: "🔥", color: "#f4c542", min: 35, max: 49 },
+                { name: "Легенды ИИ", emoji: "💎", color: "#4ecdc4", min: 50, max: 64 },
+                { name: "Сингулярности", emoji: "🌀", color: "#9c27b0", min: 65, max: 75 }
+              ];
+        
+              const level = data.level;
+              const currentLeague = leagues.find(l => level >= l.min && level <= l.max);
+              const nextLeague = leagues.find(l => level < l.min);
+        
+              const progressElement = document.getElementById("leagueProgress");
+              const progressLabel = document.getElementById("leagueProgressLabel");
+        
+              if (progressElement && currentLeague) {
+                if (nextLeague) {
+                  const range = nextLeague.min - currentLeague.min;
+                  const progress = level - currentLeague.min;
+                  const percent = Math.min(100, (progress / range) * 100);
+        
+                  progressElement.style.width = percent + "%";
+                  progressElement.style.backgroundColor = nextLeague.color;
+                  progressLabel.innerText = `До "${nextLeague.name}": ${nextLeague.min - level} уровней`;
+                } else {
+                  progressElement.style.width = "100%";
+                  progressElement.style.backgroundColor = currentLeague.color;
+                  progressLabel.innerText = `Ты достиг вершины!`;
+                }
+              }
+            })
+            .catch(error => {
+              console.error('Ошибка при получении данных пользователя:', error);
+            });
+        }
+        
+        function buySubscription() {
+          const confirmBtn = document.getElementById("confirmSubscriptionBtn");
+          confirmBtn.style.display = "inline-block";
+        
+          const tg = window.Telegram.WebApp;
+          const user = tg.initDataUnsafe?.user;
+          if (!user) return alert("Ошибка: пользователь не найден.");
+        
+          fetch(`/api/user/${user.id}/subscribe`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                alert("Подписка успешно активирована!");
+                document.getElementById("profileSubscriptionStatus").innerText = 'Подписка активна ✅';
+                confirmBtn.style.display = "none";
+              } else {
+                alert(data.message || "Не удалось купить подписку.");
+              }
+            })
+            .catch(err => {
+              console.error("Ошибка при покупке подписки:", err);
+              alert("Произошла ошибка.");
+            });
+        }
+        
+        function confirmSubscription() {
+          buySubscription();
+        }
+        window.addEventListener('DOMContentLoaded', openProfile);
+        </script>
+           
+</body>
+
+</html>
