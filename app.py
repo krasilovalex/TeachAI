@@ -7,6 +7,7 @@ from yandexgpt import query_yandexgpt
 import hashlib
 import time
 import random
+from ai_mentor import generate_response  # Твоя логика
 
 app = Flask(__name__, static_folder="public")
 DATA_FILE = 'user_history.json'
@@ -109,6 +110,29 @@ LEVEL_THRESHOLDS = [
  95600,     # Уровень 74
  97850      # Уровень 75
 ]
+
+TASK_TO_LESSON = {
+    "1-1": "1.1", "1-2": "1.1", "1-3": "1.1", "1-4": "1.1", "1-5": "1.1", "1-6": "1.1", "1-7": "1.1",
+    "1-8": "1.2", "1-9": "1.2", "1-10": "1.2",
+    "1-11": "1.3",
+    # добавляй дальше по мере разработки
+}
+
+def update_lesson_progress(user_data, task_id):
+    new_progress = TASK_TO_LESSON.get(task_id)
+    if new_progress and new_progress != user_data["progress"].get("lesson_progress"):
+        user_data["progress"]["lesson_progress"] = new_progress
+
+
+
+@app.route("/mentor", methods=["POST"])
+def mentor_reply():
+
+    data = request.get_json()
+    user_id = str(data["user_id"])
+    message = data["message"]
+    reply = generate_response(user_id, message)
+    return jsonify({"reply": reply})
 
 def update_level(users, user_id):
     xp = users[user_id]['experience']
@@ -573,6 +597,9 @@ def mark_task_complete():
     # Обновляем прогресс
     user['progress'].setdefault('completed_themes', []).append(task_id)
     user['experience'] += 50
+
+    # 🧠 Обновляем lesson_progress
+    update_lesson_progress(user, task_id)
 
     new_achievements = update_level(users, user_id)
 
