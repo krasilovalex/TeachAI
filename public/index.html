@@ -212,6 +212,122 @@
   font-size: 1rem;
   margin-top: 10px;
 }
+#mentor-widget {
+  position: fixed;
+  bottom: 90px;
+  left: 20px;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 999;
+}
+
+/* Модальное окно наставника */
+#mentor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none; /* Скрыто по умолчанию */
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Контент модалки */
+.modals-content {
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Кнопка закрытия */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* Заголовок */
+.modals-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* Чат-бокс */
+#chat-box {
+  max-height: 300px;
+  overflow-y: auto;
+  text-align: left;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #F0F0F0;
+  border-radius: 15px;
+}
+
+/* Поле ввода */
+#chat-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Кнопка отправки */
+.modals-content button {
+  padding: 10px;
+  background-color: #C8F7FF;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.modals-content button:hover {
+  background-color: #b3effa;
+}
+.user-msg {
+  background-color: #e0f7fa;
+  color: #006064;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  text-align: right;
+  max-width: 80%;
+  margin-left: auto;
+}
+
+.bot-msg {
+  background-color: #f1f8e9;
+  color: #33691e;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  text-align: left;
+  max-width: 80%;
+  margin-right: auto;
+}
   </style>
 
 <script>
@@ -336,7 +452,14 @@ updateCourseProgress('task-1', 3); // если 5 заданий
     </div>
     
   </div>
+
   <div class="footer">
+
+     <!-- Кнопка "Профиль" -->
+     <button class="dom-btn" onclick="window.location.href='mentor.html'" title="Профиль">
+      <img src="domik.png" alt="Профиль" class="dom">
+    </button>
+
     <!-- Кнопка "Профиль" -->
     <button class="dom-btn" onclick="window.location.href='profile.html'" title="Профиль">
       <img src="domik.png" alt="Профиль" class="dom">
@@ -351,6 +474,8 @@ updateCourseProgress('task-1', 3); // если 5 заданий
     <button class="dom-btn" onclick="window.location.href='test_prompt.html'" title="Промпт" style="margin-left: 20px;">
       <img src="ai.png" alt="Промпт" class="dom">
     </button>
+
+    
 
 
     
@@ -625,6 +750,49 @@ fetch('/api/update_level', {
   }
   </script>
     
-    
+    <div id="mentor-widget" onclick="toggleMentorModal()">🦊</div>
+
+    <!-- Модальное окно с чатом наставника -->
+    <div id="mentor-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="toggleMentorModal()">&times;</span>
+        <h3>Чат с наставником</h3>
+        <div id="chat-box" style="max-height: 200px; overflow-y: auto; text-align: left; margin-bottom: 10px;"></div>
+        <input id="chat-input" placeholder="Спроси что-нибудь..." style="width: 100%; padding: 8px; border-radius: 8px;" />
+        <button onclick="sendToMentor()" style="margin-top: 10px;">Отправить</button>
+      </div>
+    </div>
+    <script>
+      function toggleMentorModal() {
+        const modal = document.getElementById("mentor-modal");
+        modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
+      }
+      
+      async function sendToMentor() {
+  const input = document.getElementById("chat-input");
+  const chatBox = document.getElementById("chat-box");
+  const message = input.value.trim();
+  if (!message) return;
+  input.value = "";
+
+  chatBox.innerHTML += `<div class="user-msg">${message}</div>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    const res = await fetch("/mentor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: "test", message })
+    });
+
+    const data = await res.json(); // ✅ Декодируем JSON
+    const reply = data.reply || "Нет ответа от наставника."; // ✅ Извлекаем текст
+    chatBox.innerHTML += `<div class="bot-msg">${reply}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (err) {
+    chatBox.innerHTML += `<div class="bot-msg">Ошибка при получении ответа.</div>`;
+  }
+}
+      </script>  
 </body>
 </html>
