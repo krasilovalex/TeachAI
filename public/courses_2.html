@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style id="theme-style"></style>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const tg = window.Telegram.WebApp;
+      tg.ready(); // важно для корректной инициализации
+  
+      const userId = tg.initDataUnsafe?.user?.id;
+      if (userId) {
+        document.body.dataset.userId = userId;
+        console.log("userId:", userId);
+      } else {
+        console.warn("userId не получен из Telegram WebApp");
+      }
+    });
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Курс: Введение в ИИ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #C8F7FF;
+    }
+    h1, h2, h3 {
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+    .module, .lesson, .block {
+      background: #fff;
+      border-radius: 25px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .lesson h3 {
+      margin-top: 0;
+      font-size: 16px;
+      color: #333;
+    }
+    ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    .block-title {
+      font-weight: 700;
+      color: #555;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    .nav-buttons a {
+      text-decoration: none;
+      background-color: #C8F7FF;
+      color: #020202;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    .nav-buttons a:hover {
+      background-color: #C8F7FF;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background-color: #fff;
+      border-radius: 25px 25px 0 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dom-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dom {
+      height: 40px;
+      width: auto;
+    }
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 60px 20px;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 20px;
+  border-radius: 25px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-family: 'Montserrat', sans-serif;
+  color: #222;
+}
+
+.close {
+  color: #aaa;
+  font-size: 24px;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+  transition: color 0.2s;
+  border: none;
+  background: none;
+}
+
+.close:hover {
+  color: #222;
+}
+
+.close:hover {
+  color: black;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin: 10px 0;
+  resize: vertical;
+}
+
+.close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+  </style>
+ <script>
+  function isDark(hexColor) {
+    const r = parseInt(hexColor.substr(1, 2), 16);
+    const g = parseInt(hexColor.substr(3, 2), 16);
+    const b = parseInt(hexColor.substr(5, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness < 128;
+  }
+
+  function applyTheme() {
+    const tg = window.Telegram.WebApp;
+    const theme = tg.themeParams || {};
+    const isDarkMode = isDark(theme.secondary_bg_color || '#ffffff');
+
+    if (!isDarkMode) return;
+
+    const textColor = theme.text_color || '#ffffff';
+    const hintColor = theme.hint_color || '#999999';
+    const linkColor = theme.link_color || '#64b5f6';
+    const buttonColor = theme.button_color || '#ffffff';
+    const buttonTextColor = theme.button_text_color || '#000000';
+
+    const style = `
+      body, h1, h2, h3, p, ul, li, .nav-buttons a, .block-title {
+        color: ${textColor} !important;
+      }
+      h4 {
+      color:black;
+      }
+      .nav-buttons a {color:black !important;}
+
+      .mod-con {
+      color:white !important;
+      background-color:#23282B !important;
+      }
+
+      .modal-content {
+      color:white !important;
+      background-color: #23282B !important;
+    
+      
+      }
+
+      .btn, button:not([style*="background:#C8F7FF"]) {
+        background-color: ${buttonColor} !important;
+        color: ${buttonTextColor} !important;
+      }
+
+      a {
+        color: ${linkColor} !important;
+      }
+
+      .toast {
+        background-color: ${hintColor} !important;
+        color: ${textColor} !important;
+      }
+      .module, .lesson, .block {
+       background-color: #23282B !important;
+       box-shadow: 0 4px 12px rgb(255 255 255) !important;
+      }
+      .footer {background-color: #23282B !important;}
+      button:not(.dom-btn):not(.nfi-help) {
+      background-color: ${buttonColor} !important;
+      color: ${buttonTextColor} !important;
+      
+}
+      .kurs {color:black;}
+    .footer .dom-btn,
+    .footer .dom {
+      background: none !important;
+      filter: none !important;
+    }      
+    `;
+
+    let styleTag = document.getElementById('theme-style');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'theme-style';
+      document.head.appendChild(styleTag);
+    }
+    styleTag.innerHTML = style;
+  }
+
+  window.addEventListener('DOMContentLoaded', applyTheme);
+</script>
+
+
+  
+</head>
+<body>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <h4>🧠 Курс: Типы нейросетей</h4>
+
+  <div class="lesson">
+    <h2>Модуль 2: Типы нейросетей</h2>
+    <p><strong>Цель:</strong> ИИ-модели бывают разными — в зависимости от архитектуры и задач, которые они решают. Вот ключевые типы нейросетей:</p>
+    <div class="nav-buttons">
+        <a href="#theory-2-1">📘 Теория</a>
+        <a href="#practice-2-1">🧪 Практика</a>
+        <a href="#tasks-2-1">📌 Задания</a>
+      </div>
+    <div class="block" id="theory-2-1">
+        
+        <div class="block-title">📘 Теория:</div>
+        <ul>
+          <li data-task-id="2-1">Искусственные нейронные сети (ANN)◀️</li>
+          <li data-task-id="2-2">Свёрточные нейросети (CNN) — изображения, медицина, видео◀️</li>
+          <li data-task-id="2-3">Рекуррентные сети (RNN, LSTM) — текст, перевод, речь◀️</li>
+          <li data-task-id="2-4">Трансформеры (Transformer) — ChatGPT, BERT, T5◀️</li>
+          <li data-task-id="2-5">Генеративные модели (GAN, Diffusion) — изображения, видео, музыка◀️</li>
+        </ul>
+      </div>
+      
+      <div class="block" id="practice-2-1">
+        <div class="block-title">🧪 Практика:</div>
+        <ul>
+          <li data-task-id="2-6">Определи, какая сеть стоит за твоим любимым ИИ-сервисом (например, Midjourney или Google Translate)◀️</li>
+          <li data-task-id="2-7">Открой [TensorFlow Playground](https://playground.tensorflow.org/) и понаблюдай, как работает простая нейросеть◀️</li>
+        </ul>
+      </div>
+      
+      <div class="block" id="tasks-2-1">
+        <div class="block-title">📌 Задания:</div>
+        <ul>
+          <li data-task-id="2-8">Составь таблицу: Тип сети → Принцип работы → Где используется◀️</li>
+          <li data-task-id="2-9">Придумай 3 новых идеи применения для каждой архитектуры (ANN, CNN, RNN, Transformer, GAN)◀️</li>
+        </ul>
+      </div>
+      
+      
+      
+      <!-- Модальное окно -->
+      <div id="answerModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h3>Ответ на задание</h3>
+          <textarea id="userAnswer" placeholder="Напиши свой ответ здесь..."></textarea>
+          <button onclick="submitAnswer()">Отправить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  
+
+
+  <div class="footer">
+    <button class="dom-btn" onclick="window.location.href='learn.html'" title="Назад">
+      <img src="domik.png" alt="Домой" class="dom">
+    </button>
+    <button class="dom-btn" onclick="window.location.href='test_prompt.html'" title="Промпт" style="margin-left: 20px;">
+      <img src="ai.png" alt="Промпт" class="dom">
+    </button>
+  </div>
+
+
+  <!-- Модальное окно -->
+  <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; animation: fadeIn 0.3s ease;">
+      <div id="modal-content" class="mod-con" style="background:#fff; padding:20px; border-radius:15px; max-width:90%; max-height:80%; overflow:auto; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        <h2 id="modal-title"></h2>
+        <div id="modal-text" style="white-space: pre-wrap;"></div>
+        <button onclick="closeModal()" style="margin-top:10px; background:#C8F7FF; color:rgb(0, 0, 0); padding:8px 16px; border:none; border-radius:10px;">Закрыть</button>
+      </div>
+    </div>
+ 
+  <div id="notification" style="
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4ecdc4;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  display: none;
+  z-index: 1000;">
+  +50 опыта!
+</div>
+  
+  <!-- Анимация -->
+  <style>
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  </style>
+  
+  <!-- JavaScript -->
+  <script>
+let currentTaskId = null;
+
+document.querySelectorAll(".open-answer-btn").forEach(button => {
+  button.addEventListener("click", function () {
+    const taskEl = this.closest(".task");
+    const taskId = taskEl.getAttribute("data-task-id");
+    currentTaskId = taskId;
+    console.log("Выбран taskId:", currentTaskId); // для отладки
+    openedsModal(taskId); // обязательно передать taskId!
+  });
+});
+
+function openedsModal(taskId) {
+  const modal = document.getElementById("answerModal");
+  modal.style.display = "flex";
+  document.getElementById("modalTitle").innerText = `Ответ на задание ${taskId}`;
+  document.getElementById("userAnswer").value = "";
+  modal.setAttribute("data-task-id", taskId);
+}
+
+
+function closeModal() {
+  document.getElementById("answerModal").style.display = "none";
+}
+
+function submitAnswer() {
+  console.log("submitAnswer запущен. currentTaskId:", currentTaskId);
+  const answer = document.getElementById("userAnswer").value.trim();
+  const userId = window.currentUserId || "123";
+
+  if (!currentTaskId) {
+    alert("Ошибка: не найден taskId.");
+    return;
+  }
+
+  if (!answer) {
+    alert("Пожалуйста, напиши ответ перед отправкой.");
+    return;
+  }
+
+  fetch("/mark_task_complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      task_id: currentTaskId,
+      user_id: userId,
+      answer: answer
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP статус: " + res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("Ответ сервера:", data);
+      if (data.success) {
+        if (data.was_already_completed) {
+          alert("⏳ Задание уже выполнялось, опыт не начислен");
+        } else {
+          alert(`🔥 +50 опыта! Текущий уровень: ${data.current_level}`);
+        }
+        closeModal();
+      }
+    })
+    .catch(err => {
+      console.error("Ошибка отправки:", err);
+      alert("Произошла ошибка при отправке. Проверь соединение или лог.");
+    });
+}
+function toggleTest(id) {
+  const el = document.getElementById(id);
+  el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+}
+function opensModal(id) {
+  document.getElementById(id).style.display = 'block';
+}
+
+function closesModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function checkAnswer(event, questionId, correctAnswer) {
+  event.preventDefault();
+  const form = event.target;
+  const selected = form.querySelector(`input[name="${questionId}"]:checked`);
+  const resultDiv = document.getElementById(`result-${questionId}`);
+
+  if (!selected) {
+    resultDiv.innerText = "Выберите один из вариантов ответа.";
+    resultDiv.style.color = "orange";
+    return;
+  }
+
+  if (selected.value === correctAnswer) {
+    resultDiv.innerText = "Верно!";
+    resultDiv.style.color = "green";
+
+    // Получаем id модального окна
+    const modal = form.closest('.modal');
+    if (modal) {
+      // Находим <li> по атрибуту onclick, содержащему id этого модального окна
+      const taskTrigger = document.querySelector(`li[onclick*="${modal.id}"][data-task-id]`);
+      const taskId = taskTrigger?.dataset.taskId;
+
+      if (taskId && typeof userId !== "undefined") {
+  markTaskComplete(taskId, userId);
+} else {
+  console.warn("Не найден taskId или userId");
+}
+    }
+  } else {
+    resultDiv.innerText = "Неправильно. Попробуйте снова.";
+    resultDiv.style.color = "red";
+  }
+}
+
+let theoryData = {};
+
+fetch("theoryData.json")
+  .then((res) => res.json())
+  .then((data) => {
+    theoryData = data;
+    console.log("Теория загружена:", theoryData);
+  })
+  .catch((err) => console.error("Ошибка загрузки theoryData:", err));
+
+
+
+
+  
+const userId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+
+function openModal(li) {
+  const title = li.textContent.trim();
+  const taskId = li.dataset.taskId;
+
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-text").innerHTML =
+    (theoryData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
+
+  const modal = document.getElementById("modal");
+  modal.style.display = "flex";
+  modal.dataset.taskId = taskId;
+
+  console.log("Модал открыт, taskId сохранен:", taskId);
+}
+
+function openedModal(li) {
+  const title = li.textContent.trim();
+  const taskId = li.dataset.taskId;
+
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-text").innerHTML =
+    (theorysData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
+
+  const modal = document.getElementById("modal");
+  modal.style.display = "flex";
+  modal.dataset.taskId = taskId;
+
+  console.log("Модал открыт, taskId сохранен:", taskId);
+}
+
+function closeModal() {
+  const modal = document.getElementById("modal");
+  modal.style.display = "none";
+
+  const taskId = modal.dataset.taskId;
+  if (taskId && userId) {
+    console.log("Закрытие модалки, отправка на сервер:", taskId, userId);
+    markTaskComplete(taskId, userId);
+  } else {
+    console.warn("taskId или userId не найден при закрытии модалки");
+  }
+}
+
+function markTaskComplete(taskId, userId, answerText) {
+  return fetch("/mark_task_complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      task_id: taskId,
+      user_id: userId,
+      answer: answerText
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    console.log("Ответ сервера:", data);
+    if (data.success) {
+      if (data.was_already_completed) {
+        showNotification("⏳ Задание уже выполнялось, опыт не начислен");
+      } else {
+        showNotification(`🔥 +50 опыта! Текущий уровень: ${data.current_level}`);
+      }
+    } else {
+      alert("Ошибка: " + data.message);
+    }
+  });
+}
+
+
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  notification.style.display = "block";
+  
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, 3000);
+}
+
+document.querySelectorAll(
+  "#theory-2-1 li, #practice-2-1 li, #theory-1-2 li, #practice-1-2 li, #tasks-2-1 li, #tasks-1-1 li, #theory-1-3 li, #practice-1-3 li, #tasks-1-3 li"
+).forEach((li) => {
+  const taskId = li.getAttribute("data-task-id");
+  // исключаем элементы с onclick вручную — например, task 1-7
+  if (taskId === "1-7") return;
+  li.style.cursor = "pointer";
+  li.addEventListener("click", () => openModal(li));
+});
+
+
+
+document.getElementById("modal-close").addEventListener("click", closeModal);
+  </script>
+</body>
+</html>
