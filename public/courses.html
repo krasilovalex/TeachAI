@@ -262,8 +262,8 @@
       <div class="block" id="practice-1-1">
         <div class="block-title">🧪 Практика:</div>
         <ul>
-          <li>Спроси у ИИ◀️</li>
-          <li>Нарисовать схему: как данные проходят через нейросеть◀️</li>
+          <li data-task-id="1-5">Спроси у ИИ◀️</li>
+          <li data-task-id="1-6">Нарисовать схему: как данные проходят через нейросеть◀️</li>
         </ul>
       </div>
       <div class="block" id="tasks-1-1">
@@ -551,11 +551,12 @@ function markTaskComplete(taskId, userId) {
   .then(data => {
     console.log("Ответ сервера:", data);
     if (data.success) {
-      showNotification(`🔥 +50 опыта! Уровень: ${data.new_level}`);
+      showNotification(`🔥 +50 опыта! Текущий уровень: ${data.current_level}`);
     }
   })
   .catch(err => console.error("Ошибка отправки:", err));
 }
+
 
 function showNotification(message) {
   const notification = document.getElementById("notification");
