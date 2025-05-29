@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime, timedelta
 import logging
-from gigachat_api import query_gigachat_for_feedback
+from yandexgpt import query_yandexgpt
 import hashlib
 import time
 
@@ -216,8 +216,8 @@ def analyze_prompt():
         # Сохраняем обновления
         save_users(users)
 
-        # Анализ промпта (например, через GigaChat API)
-        result = query_gigachat_for_feedback(prompt)
+        # Анализ промпта (например, через YandexGPT)
+        result = query_yandexgpt(prompt)
 
         return jsonify({'analysis': result})
     except Exception as e:
