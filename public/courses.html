@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
   <style id="theme-style"></style>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Получаем данные от Telegram WebApp
         const tg = window.Telegram.WebApp;
@@ -235,7 +234,7 @@
   
 </head>
 <body>
-
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <h4>🧠 Курс: Введение в нейросети и ИИ</h4>
 
   <div class="module">
@@ -252,7 +251,7 @@
       <div class="block" id="theory-1-1">
         <div class="block-title">📘 Теория:</div>
         <ul>
-          <li>Понятие искусственного интеллекта (ИИ)◀️</li>
+          <li onclick="">Понятие искусственного интеллекта (ИИ)◀️</li>
           <li>Различие: ИИ vs Машинное обучение vs Нейросеть◀️</li>
           <li>Краткая история ИИ (от Turing Test до GPT-4)◀️</li>
           <li>Принцип работы нейросети: нейроны, слои, веса, активация◀️</li>
@@ -495,102 +494,98 @@ OpenAI делает GPT-3.5 доступным в виде чат-бота — �
 
 
   
-    document.querySelectorAll("#theory-1-1 li").forEach((li) => {
-      li.style.cursor = "pointer";
-      li.addEventListener("click", () => {
-        const title = li.textContent.trim();
-        document.getElementById("modal-title").textContent = title;
-        document.getElementById("modal-text").innerHTML = (theoryData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
-        document.getElementById("modal").style.display = "flex";
-      });
+document.querySelectorAll("#theory-1-1 li").forEach((li) => {
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () => {
+      const title = li.textContent.trim();
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-text").innerHTML = (theoryData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
+      document.getElementById("modal").style.display = "flex";
     });
-    document.querySelectorAll("#practice-1-1 li").forEach((li) => {
-      li.style.cursor = "pointer";
-      li.addEventListener("click", () => {
-        const title = li.textContent.trim();
-        document.getElementById("modal-title").textContent = title;
-        document.getElementById("modal-text").innerHTML = (theoryData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
-        document.getElementById("modal").style.display = "flex";
-      });
-    });
-  
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-    }
-    function toggleTest(id) {
-  const el = document.getElementById(id);
-  el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-}
-function openModal(id) {
-  document.getElementById(id).style.display = 'block';
-}
-
-function closesModal(id) {
-  document.getElementById(id).style.display = 'none';
-}
-
-
-</script>
-  <script>
-   function checkAnswer(event, questionId, correctAnswer) {
-  event.preventDefault();
-  const form = event.target;
-  const selected = form.querySelector(`input[name="${questionId}"]:checked`);
-  const resultDiv = document.getElementById(`result-${questionId}`);
-
-  if (!selected) {
-    resultDiv.innerText = "Выберите один из вариантов ответа.";
-    resultDiv.style.color = "orange";
-    return;
-  }
-
-  if (selected.value === correctAnswer) {
-    resultDiv.innerText = "Верно!";
-    resultDiv.style.color = "green";
-    markTaskComplete(`task-1-1`);
-  } else {
-    resultDiv.innerText = "Неправильно. Попробуйте снова.";
-    resultDiv.style.color = "red";
-  }
-}
-
-function markTaskComplete(taskId) {
-  const userId = document.body.dataset.userId;
-
-  if (!userId) {
-    console.warn("userId не найден в data-атрибуте.");
-    return;
-  }
-
-  if (localStorage.getItem(`task_${taskId}_completed`)) {
-    console.log("Эта задача уже была отмечена как выполненная.");
-    return;
-  }
-
-  fetch('https://your-server-name.ru/api/complete-task', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      task_id: taskId
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      console.log("Задача выполнена, +50 опыта");
-      localStorage.setItem(`task_${taskId}_completed`, "true");
-    } else {
-      console.warn("Ошибка при обновлении опыта:", data.message);
-    }
-  })
-  .catch(error => {
-    console.error("Ошибка при отправке запроса:", error);
   });
-}
 
+  document.querySelectorAll("#practice-1-1 li").forEach((li) => {
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () => {
+      const title = li.textContent.trim();
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-text").innerHTML = (theoryData[title] || "Описание пока не добавлено.").replace(/\n/g, '<br>');
+      document.getElementById("modal").style.display = "flex";
+    });
+  });
+
+  function closeModal() {
+    document.getElementById("modal").style.display = "none";
+
+    const title = document.getElementById("modal-title").textContent.trim();
+
+    // Пытаемся извлечь номер задания из заголовка (например, "Теория 1.1")
+    const match = title.match(/(\d+)[.\-](\d+)/);
+    if (match) {
+      const taskId = `task-${match[1]}-${match[2]}`;
+      markTaskComplete(taskId);
+    }
+  }
+
+  function toggleTest(id) {
+    const el = document.getElementById(id);
+    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+  }
+
+  function openModal(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function closesModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  function markTaskComplete(taskId) {
+    const userId = document.body.dataset.userId;
+
+    if (!userId) {
+      console.warn("userId не найден в data-атрибуте.");
+      return;
+    }
+
+    if (localStorage.getItem(`task_${taskId}_completed`)) {
+      console.log("Эта задача уже была отмечена как выполненная.");
+      return;
+    }
+
+    fetch('https://cmsxkl.ddns/net/api/complete-task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        task_id: taskId
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log("Задача выполнена, +50 опыта");
+        localStorage.setItem(`task_${taskId}_completed`, "true");
+      } else {
+        console.warn("Ошибка при обновлении опыта:", data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Ошибка при отправке запроса:", error);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+    const tg = window.Telegram.WebApp;
+    const userId = tg.initDataUnsafe?.user?.id;
+    if (userId) {
+      document.body.dataset.userId = userId;
+      console.log("userId set:", userId);
+    } else {
+      console.warn("userId не получен из Telegram WebApp");
+    }
+  });
   </script>
 </body>
 </html>
