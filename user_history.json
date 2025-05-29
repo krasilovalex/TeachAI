@@ -1,409 +1,579 @@
 {
-  "users": {
-    "123456789": {
-      "username": "user1",
-      "progress": {
-        "completed_themes": [
-          "Основы промпт-инжиниринга"
-        ],
-        "tests_passed": 2,
-        "best_prompts": [
-          {
-            "prompt": "Опиши закон термодинамики простым языком",
-            "rating": 9.5
-          }
-        ]
-      },
-      "league": {
-        "name": "Легенды ИИ",
-        "emoji": "🤖",
-        "color": "#4ecdc4"
-      },
+  "123456789": {
+    "username": "user1",
+    "level": 2,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
-      "level": 2,
-      "achievements": [
-        "Начинающий промпт-инженер"
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [
+        "Основы промпт-инжиниринга"
       ],
-      "feedback": [],
-      "completed_tasks": [
-        "task-1-1"
+      "tests_passed": 2,
+      "test_results": [],
+      "best_prompts": [
+        {
+          "prompt": "Опиши закон термодинамики простым языком",
+          "rating": 9.5
+        }
       ]
     },
-    "5244307856": {
-      "username": "LubitelusOfManulus",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [
+      "Начинающий промпт-инженер"
+    ],
+    "feedback": []
+  },
+  "5244307856": {
+    "username": "LubitelusOfManulus",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1388911463": {
-      "username": "raya_praqm",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 80,
-      "achievements": [],
-      "feedback": []
-    },
-    "5043656672": {
-      "username": "localhostings",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "completed_tasks": [],
-      "level": 2,
-      "experience": 100,
-      "achievements": [],
-      "feedback": []
-    },
-    "1998708818": {
-      "username": "ItsMikkey",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1388911463": {
+    "username": "raya_praqm",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1835437097": {
-      "username": "bebka812",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 80,
+    "achievements": [],
+    "feedback": []
+  },
+  "5043656672": {
+    "username": "localhostings",
+    "level": 2,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "6964113505": {
-      "username": "AckermanAmi",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 100,
+    "achievements": [],
+    "feedback": []
+  },
+  "1998708818": {
+    "username": "ItsMikkey",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "6836335949": {
-      "username": "code0genius",
-      "progress": {
-        "completed_themes": [
-          "1-1",
-          "1-2",
-          "1-3",
-          "1-4",
-          "1-5",
-          "1-6",
-          "1-20"
-        ],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": [],
-        "task_answers": {
-          "1-20": null
-        }
-      },
-      "level": 11,
-      "experience": 5450,
-      "achievements": [
-        "code0genius",
-        "cmsxkl",
-        "Ученики ИИ",
-        "Подмастерье TeachAI",
-        "Инженер Промптов"
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1835437097": {
+    "username": "bebka812",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "6964113505": {
+    "username": "AckermanAmi",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "6836335949": {
+    "username": "code0genius",
+    "level": 11,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [
+        
       ],
-      "feedback": [],
-      "last_prompt_time": 1748525533.2101104,
-      "last_prompt_hash": "67e811a33dab337b9d24bf8173e646ca47831ad324865dfa518df2d39923237d",
-      "achievements_cache": {
-        "code0genius": "🌐",
-        "cmsxkl": "🦾",
-        "Ученики ИИ": "💡",
-        "Подмастерье TeachAI": "🧭",
-        "Инженер Промптов": "🌐"
-      }
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1852861777": {
-      "username": "RainTetei",
-      "progress": {
-        "completed_themes": [
-          "1-4",
-          "1-6",
-          "1-3",
-          "1-1",
-          "1-2",
-          "1-5"
-        ],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 3,
-      "experience": 800,
-      "achievements": [
-        "Ученики ИИ"
+    "experience": 5450,
+    "achievements": [
+      "code0genius",
+      "cmsxkl",
+      "Ученики ИИ",
+      "Подмастерье TeachAI",
+      "Инженер Промптов"
+    ],
+    "feedback": []
+  },
+  "1852861777": {
+    "username": "RainTetei",
+    "level": 3,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [
+        "1-4",
+        "1-6",
+        "1-3",
+        "1-1",
+        "1-2",
+        "1-5"
       ],
-      "feedback": [],
-      "last_prompt_time": 1748533418.789146,
-      "last_prompt_hash": "b8f9bda04ba4be078b908293d852baa3890d483a781f02d0d07db0df8de4a060"
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1996114208": {
-      "username": "EastCoast_ATUA",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 800,
+    "achievements": [
+      "Ученики ИИ"
+    ],
+    "feedback": []
+  },
+  "1996114208": {
+    "username": "EastCoast_ATUA",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "341208772": {
-      "username": "Zanyd4",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": [],
-        "experience": 10,
-        "level": 0
-      },
-      "level": 2,
-      "experience": 120,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "341208772": {
+    "username": "Zanyd4",
+    "level": 2,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 10,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "6129986431": {
-      "username": "floywees",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 120,
+    "achievements": [],
+    "feedback": []
+  },
+  "6129986431": {
+    "username": "floywees",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "5724940090": {
-      "username": "Lorikowka29",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 180,
-      "achievements": [],
-      "feedback": [],
-      "last_prompt_time": 1748446001.1936858,
-      "last_prompt_hash": "f1996f1617a917a6cb5086615b099ef88a39d42de654ae0ec6ebf19310463df2"
-    },
-    "817614547": {
-      "username": "moy_dom_block",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 20,
-      "achievements": [],
-      "feedback": []
-    },
-    "6653713829": {
-      "username": "dev_angel_7553",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 20,
-      "achievements": [],
-      "feedback": [],
-      "last_prompt_time": 1748413533.953184,
-      "last_prompt_hash": "919fd1cab4a8d72a47c52d7c9ad31f20e65a7a9d59d1ef578ff1d3c843d446af"
-    },
-    "5207237151": {
-      "username": "dimonkin1",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 40,
-      "achievements": [],
-      "feedback": []
-    },
-    "516969826": {
-      "username": "ta_vee",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "5724940090": {
+    "username": "Lorikowka29",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "434277405": {
-      "username": "nastasyashakht",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 180,
+    "achievements": [],
+    "feedback": []
+  },
+  "817614547": {
+    "username": "moy_dom_block",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "7942575099": {
-      "username": "swyskwss",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 20,
+    "achievements": [],
+    "feedback": []
+  },
+  "6653713829": {
+    "username": "dev_angel_7553",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1780187915": {
-      "username": "plbnk",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 20,
+    "achievements": [],
+    "feedback": []
+  },
+  "5207237151": {
+    "username": "dimonkin1",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1761547850": {
-      "username": "Miyounii",
-      "progress": {
-        "completed_themes": [
-          "1-1",
-          "1-2",
-          "1-3",
-          "1-4"
-        ],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
-      "experience": 240,
-      "achievements": [],
-      "feedback": [],
-      "last_prompt_time": 1748435015.5027978,
-      "last_prompt_hash": "18fdac2f66cbef05fcc6ccf55bb4d767b7c19bf1216b2fc9687180cac2b747b7"
-    },
-    "1754023023": {
-      "username": "Merrrexx",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 40,
+    "achievements": [],
+    "feedback": []
+  },
+  "516969826": {
+    "username": "ta_vee",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1367246049": {
-      "username": "Sojomoschi",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "434277405": {
+    "username": "nastasyashakht",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1801153461": {
-      "username": "l1m41c",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "7942575099": {
+    "username": "swyskwss",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "1960485787": {
-      "username": "evangeIiona",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1780187915": {
+    "username": "plbnk",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
     },
-    "828732461": {
-      "username": "Sw_EkLa",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 0,
-        "test_results": [],
-        "best_prompts": []
-      },
-      "level": 1,
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1761547850": {
+    "username": "Miyounii",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
       "experience": 0,
       "achievements": [],
-      "feedback": []
-    }
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [
+        "1-1",
+        "1-2",
+        "1-3",
+        "1-4"
+      ],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 240,
+    "achievements": [],
+    "feedback": []
+  },
+  "1754023023": {
+    "username": "Merrrexx",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1367246049": {
+    "username": "Sojomoschi",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1801153461": {
+    "username": "l1m41c",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "1960485787": {
+    "username": "evangeIiona",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
+  },
+  "828732461": {
+    "username": "Sw_EkLa",
+    "level": 1,
+    "goal": "изучить основы ИИ",
+    "weaknesses": [],
+    "chat": [],
+    "progress": {
+      "lesson_progress": "1.1",
+      "experience": 0,
+      "achievements": [],
+      "daily_streak": 0,
+      "last_active": null,
+      "completed_themes": [],
+      "tests_passed": 0,
+      "test_results": [],
+      "best_prompts": []
+    },
+    "experience": 0,
+    "achievements": [],
+    "feedback": []
   }
 }
