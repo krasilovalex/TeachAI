@@ -340,6 +340,21 @@
       <button onclick="closeModal()" style="margin-top:10px; background:#C8F7FF; color:rgb(0, 0, 0); padding:8px 16px; border:none; border-radius:10px;">Закрыть</button>
     </div>
   </div>
+ 
+  <div id="notification" style="
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4ecdc4;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  display: none;
+  z-index: 1000;">
+  +50 опыта!
+</div>
   
   <!-- Анимация -->
   <style>
@@ -533,8 +548,23 @@ function markTaskComplete(taskId, userId) {
     body: JSON.stringify({ task_id: taskId, user_id: userId })
   })
   .then(res => res.json())
-  .then(data => console.log("Ответ сервера:", data))
+  .then(data => {
+    console.log("Ответ сервера:", data);
+    if (data.success) {
+      showNotification(`🔥 +50 опыта! Уровень: ${data.new_level}`);
+    }
+  })
   .catch(err => console.error("Ошибка отправки:", err));
+}
+
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  notification.style.display = "block";
+  
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, 3000);
 }
 
 document.querySelectorAll("#theory-1-1 li, #practice-1-1 li").forEach((li) => {
