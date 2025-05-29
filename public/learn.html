@@ -220,6 +220,17 @@
   display: none;
 }
 
+.progress-container {
+  width: 100%;
+  height: 20px;
+  max-width: 300px; /* ограничиваем длину */
+  margin: 0 auto; /* центрируем */
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 30px;
+}
+
   </style>
 <script>
     function isDark(hexColor) {
@@ -299,23 +310,34 @@
       <img src="chelblya.png" alt="Курс 1" class="img_1">
       <h1>Введение в нейросети и ИИ</h1>
       <h2>@cmsxkl</h2>
+      
       <a href="#" onclick="window.location.href = 'courses.html'">Начать курс</a>
+      <div class="progress-container">
+        <div id="progress-bar-1" class="progress-bar" style="width: 0%;"></div>
+      </div>
+      <p id="progress-label-1">Загрузка прогресса...</p>
     </div>
 
     <div class="card">
       <img src="chelikblya.png" alt="Курс 2" class="img_2">
       <h1>Типы нейросетей</h1>
       <h2>@cmsxkl</h2>
-      <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
-      <h2>Только по подписке</h2>
+      <a href="#" onclick="windw.location.href = 'courses_2.html'">Начать курс</a>
+      <div class="progress-container">
+        <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+      </div>
+      <p id="progress-label">Загрузка прогресса...</p>
     </div>
 
     <div class="card">
       <img src="chelikblya.png" alt="Курс 2" class="img_3">
       <h1>Как использовать нейросети в повседневной жизни</h1>
       <h2>@cmsxkl</h2>
-      <a href="#" onclick="checkSubscriptionAccess()">Начать курс</a>
-      <h2>Только по подписке</h2>
+      <a href="#" onclick="windw.location.href = 'courses_3.html'">Начать курс</a>
+      <div class="progress-container">
+        <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+      </div>
+      <p id="progress-label">Загрузка прогресса...</p>
     </div>
     
   </div>
@@ -361,6 +383,45 @@
   <div id="achievement-toast" class="toast hidden"></div>
 
 <script>
+function getUserProgress(userId) {
+  fetch('/get_user_progress', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ user_id: userId })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Ошибка запроса: ' + response.status);
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      for (const courseId in data.courses) {
+        const course = data.courses[courseId];
+        const bar = document.getElementById(`progress-bar-${courseId}`);
+        const label = document.getElementById(`progress-label-${courseId}`);
+        if (bar && label) {
+          bar.style.width = `${course.progress_percent}%`;
+          label.textContent = `${course.progress_percent}% завершено`;
+        }
+      }
+    } else {
+      console.error('Ошибка:', data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Ошибка при получении прогресса:', error);
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const userId = Telegram.WebApp.initDataUnsafe.user?.id;
+  if (userId) {
+    getUserProgress(userId);
+  } else {
+    console.warn('User ID не найден');
+  }
+});
     function openProfile() {
       console.log("Кнопка нажата");
       if (!window.Telegram || !window.Telegram.WebApp) {
