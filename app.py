@@ -506,10 +506,10 @@ def mark_task_complete():
     save_all_users(users)
 
     return jsonify({
-        "success": True,
-        "message": "Опыт добавлен, задача отмечена",
-        "new_level": user["level"],
-        "new_achievements": new_achievements
+            "success": True,
+    "message": "Опыт добавлен, задача отмечена",
+    "current_level": user["level"],
+    "new_achievements": new_achievements
     }), 200
 
 
