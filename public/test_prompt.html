@@ -24,7 +24,7 @@
 
     h1 {
       text-align: center;
-      font-size: 21px;
+      font-size: 20px;
       margin-bottom: 20px;
     }
 
@@ -222,6 +222,11 @@
         });
 
         const data = await response.json();
+resultDiv.textContent = data.analysis || data.error || "Нет результата.";
+
+if (response.ok && data.analysis) {
+  showNotification("+20 опыта! Продолжай в том же духе 💪", "🔥");
+}
         resultDiv.textContent = data.analysis || data.error || "Нет результата.";
       } catch (error) {
         resultDiv.textContent = "Ошибка при анализе промпта.";
@@ -229,14 +234,14 @@
       }
     }
 
-    function showAchievementToast(title) {
-      const toast = document.getElementById("achievement-toast");
-      toast.innerHTML = `🏆 Новое достижение: <strong>${title}</strong><br>Загляни в профиль.`;
-      toast.classList.remove("hidden");
-      setTimeout(() => {
-        toast.classList.add("hidden");
-      }, 4000);
-    }
+    function showNotification(message, icon = "🏆") {
+  const toast = document.getElementById("achievement-toast");
+  toast.innerHTML = `${icon} ${message}`;
+  toast.classList.remove("hidden");
+  setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 4000);
+}
   </script>
 </body>
 </html>
