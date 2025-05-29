@@ -488,12 +488,18 @@ def mark_task_complete():
     print("Загруженные пользователи:", users.keys())
 
     if user_id not in users:
-        return jsonify({'error': f'Пользователь {user_id} не найден'}), 404
+        return jsonify({'success': False, 'message': f'Пользователь {user_id} не найден'}), 404
 
     user = users[user_id]
 
+    # Проверка, было ли задание уже выполнено
     if task_id in user['progress'].get('completed_themes', []):
-        return jsonify({"success": True, "message": "Задача уже выполнена"}), 200
+        return jsonify({
+        "success": True,
+        "was_already_completed": True,
+        "message": "Задача уже выполнена",
+        "current_level": user["level"]
+    }), 200
 
     # Обновление данных пользователя
     user['progress']['completed_themes'].append(task_id)
@@ -506,10 +512,11 @@ def mark_task_complete():
     save_all_users(users)
 
     return jsonify({
-            "success": True,
-    "message": "Опыт добавлен, задача отмечена",
-    "current_level": user["level"],
-    "new_achievements": new_achievements
+        "success": True,
+        "was_already_completed": False,
+        "message": "Опыт добавлен, задача отмечена",
+        "current_level": user["level"],
+        "new_achievements": new_achievements
     }), 200
 
 @app.route('/get_user_progress', methods=['POST'])
