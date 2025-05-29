@@ -6,6 +6,7 @@ import logging
 from yandexgpt import query_yandexgpt
 import hashlib
 import time
+import random
 
 app = Flask(__name__, static_folder="public")
 DATA_FILE = 'user_history.json'
@@ -257,29 +258,92 @@ def get_user_league(level: int):
 
 
 @app.route('/api/user/<int:user_id>')
-
 def get_user_data(user_id):
+    EMOJI_POOL = ['🏆', '🎯', '🚀', '💡', '📘', '🔍', '🧠', '🌐', '🛠️', '📈', '🧪', '👑', '🦾', '🌀', '🧭']
+
+    LEVEL_ACHIEVEMENTS = {
+        1: "Ученики ИИ",
+        5: "Подмастерье TeachAI",
+        10: "Инженер Промптов",
+        15: "Архитектор Разума",
+        20: "Мастер ИИ",
+        25: "Повелитель Моделей",
+        30: "TeachAI: Легенда",
+        35: "Алхимик Алгоритмов",
+        40: "Повелитель Знаний",
+        45: "Грандмастер Генерации",
+        50: "Создатель Сознаний",
+        55: "Навигатор Нейросетей",
+        60: "Вершитель Промптов",
+        65: "Демистификатор ИИ",
+        70: "Бессмертный Разума",
+        75: "TeachAI: Бессмертная Сингулярность"
+    }
+
+    course_achievements = {
+        "1": "🔍 Исследователь искусственного интеллекта",
+        "2": "🧠 Архитектор нейросетей",
+        "3": "🌐 AI-мастер повседневности"
+    }
+
     try:
-        with open('user_history.json', 'r', encoding='utf-8') as f:
+        with open('user_history.json', 'r+', encoding='utf-8') as f:
             users = json.load(f)
+            user_data = users.get("users", {}).get(str(user_id))
 
-        user_data = users.get("users", {}).get(str(user_id))
-        app.logger.info(f"Запрошен user_id: {user_id}")
+            app.logger.info(f"Запрошен user_id: {user_id}")
 
-        if user_data:
+            if not user_data:
+                user_data = {'level': 1, 'experience': 0, 'completed_courses': [], 'achievements': []}
+
             level = user_data.get('level', 1)
             league = get_user_league(level)
 
-            # Добавляем лигу в ответ
-            user_data['league'] = league
-            return jsonify(user_data)
-        else:
+            # Кэш достижений с эмодзи (добавляется в user_data)
+            if "achievements_cache" not in user_data:
+                user_data["achievements_cache"] = {}
+
+            achievements = []
+
+            # Уровневые ачивки
+            for lvl, title in LEVEL_ACHIEVEMENTS.items():
+                if level >= lvl:
+                    achievements.append({'emoji': '🏆', 'label': title})
+
+            # Курсовые ачивки
+            for course_id in user_data.get("completed_courses", []):
+                label = course_achievements.get(str(course_id))
+                if label:
+                    emoji, *rest = label.split(' ', 1)
+                    label_text = rest[0] if rest else label
+                    achievements.append({'emoji': emoji, 'label': label_text})
+
+            # Пользовательские ачивки
+            for ach in user_data.get("achievements", []):
+                if ach not in user_data["achievements_cache"]:
+                    user_data["achievements_cache"][ach] = random.choice(EMOJI_POOL)
+                emoji = user_data["achievements_cache"][ach]
+                achievements.append({'emoji': emoji, 'label': ach})
+
+            # Сохраняем кэш обратно
+            users["users"][str(user_id)] = user_data
+            f.seek(0)
+            json.dump(users, f, ensure_ascii=False, indent=2)
+            f.truncate()
+
+            unique_achievements = {}
+            for ach in achievements:
+                key = ach['label']
+                if key not in unique_achievements:
+                    unique_achievements[key] = ach
+
             return jsonify({
-                'level': 1,
-                'experience': 0,
-                'achievements': [],
-                'league': get_user_league(1)
+                'level': level,
+                'experience': user_data.get('experience', 0),
+                'league': league,
+                'achievements': list(unique_achievements.values())
             })
+
     except FileNotFoundError:
         return jsonify({'error': 'Файл user_history.json не найден'}), 500
     except json.JSONDecodeError:
@@ -287,6 +351,7 @@ def get_user_data(user_id):
     except Exception as e:
         app.logger.exception("Неожиданная ошибка")
         return jsonify({'error': str(e)}), 500
+
 @app.route('/api/leaderboard')
 def get_leaderboard():
     try:
@@ -533,28 +598,50 @@ def get_user_progress():
     if not user:
         return jsonify({"success": False, "message": "Пользователь не найден"}), 404
 
-    # Пример: прогресс по каждому курсу
     all_courses = {
-        "1": 21,  # курс 1 — 21 тем
-        "2": 10,  # курс 2 — 10 тем
-        "3": 20   # курс 3 — 20 тем
+        "1": 21,
+        "2": 9,
+        "3": 20
     }
+    course_names = {
+    "1": "Введение в нейросети и ИИ",
+    "2": "Типы нейросетей",
+    "3": "Как использовать нейросети в повседневной жизни"
+}
+
+    course_achievements = {
+    "1": "🔍 Исследователь ИИ",
+    "2": "🧠 Архитектор нейросетей",
+    "3": "🌐 AI-мастер повседневности"
+}
 
     completed_themes = user.get("progress", {}).get("completed_themes", [])
     course_progress = {}
 
     for course_id, total in all_courses.items():
-        # Фильтруем темы, относящиеся к текущему курсу (например, "1-1", "1-2", ...)
         completed = sum(1 for theme in completed_themes if theme.startswith(f"{course_id}-"))
         percent = int((completed / total) * 100) if total else 0
+
         course_progress[course_id] = {
-            "completed": completed,
-            "total": total,
-            "progress_percent": percent
-        }
+    "completed": completed,
+    "total": total,
+    "progress_percent": percent,
+    "course_name": course_names.get(course_id, f"Курс {course_id}")
+}
+
+        
+
+        # === 💡 Проверка 100% и награда ===
+        if percent == 100:
+            achievement_name = course_achievements.get(course_id, f"Курс {course_id} завершён")
+            if achievement_name not in user.get("achievements", []):
+                user["experience"] += 500
+                user["achievements"].append(achievement_name)
+
+    # ✅ Сохраняем обновления
+    save_users(users)
 
     return jsonify({"success": True, "courses": course_progress})
-
 
 
 
