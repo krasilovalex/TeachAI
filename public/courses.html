@@ -168,7 +168,7 @@
     const buttonTextColor = theme.button_text_color || '#000000';
 
     const style = `
-      body, h1, h2, h3, p, ul, li, .block-title {
+      body, h1, h2, h3, p, ul, li, .nav-buttons a, .block-title {
         color: ${textColor} !important;
       }
       h4 {
@@ -178,11 +178,14 @@
 
       .mod-con {
       color:white !important;
-      background-color:black !important;
+      background-color:#23282B !important;
       }
-.modal-content {
+
+      .modal-content {
       color:white !important;
-      background-color:black !important;
+      background-color: #23282B !important;
+    
+      
       }
 
       .btn, button:not([style*="background:#C8F7FF"]) {
@@ -199,10 +202,10 @@
         color: ${textColor} !important;
       }
       .module, .lesson, .block {
-       background-color : black !important;
+       background-color: #23282B !important;
        box-shadow: 0 4px 12px rgb(255 255 255) !important;
       }
-      .footer {background-color:black !important}
+      .footer {background-color: #23282B !important;}
       button:not(.dom-btn):not(.nfi-help) {
       background-color: ${buttonColor} !important;
       color: ${buttonTextColor} !important;
@@ -233,7 +236,7 @@
 </head>
 <body>
 
-  <h1>🧠 Курс: Введение в нейросети и ИИ</h1>
+  <h4>🧠 Курс: Введение в нейросети и ИИ</h4>
 
   <div class="module">
     <h2>Модуль 1: Введение в нейросети и ИИ</h2>
@@ -242,9 +245,9 @@
     <div class="lesson">
       <h3>Урок 1.1 — Что такое ИИ и нейросети</h3>
       <div class="nav-buttons">
-        <a class ="tpz" href="#theory-1-1">📘 Теория</a>
-        <a class ="tpz" href="#practice-1-1">🧪 Практика</a>
-        <a class ="tpz" href="#tasks-1-1">📌 Задания</a>
+        <a href="#theory-1-1">📘 Теория</a>
+        <a href="#practice-1-1">🧪 Практика</a>
+        <a href="#tasks-1-1">📌 Задания</a>
       </div>
       <div class="block" id="theory-1-1">
         <div class="block-title">📘 Теория:</div>
