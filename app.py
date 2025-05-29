@@ -480,6 +480,7 @@ def mark_task_complete():
     data = request.get_json()
     user_id = str(data.get('user_id'))
     task_id = data.get('task_id')
+    answer = data.get('answer')  # новый параметр
 
     if not user_id or not task_id:
         return jsonify({"success": False, "message": "user_id или task_id не указаны"}), 400
@@ -495,19 +496,22 @@ def mark_task_complete():
     # Проверка, было ли задание уже выполнено
     if task_id in user['progress'].get('completed_themes', []):
         return jsonify({
-        "success": True,
-        "was_already_completed": True,
-        "message": "Задача уже выполнена",
-        "current_level": user["level"]
-    }), 200
+            "success": True,
+            "was_already_completed": True,
+            "message": "Задача уже выполнена",
+            "current_level": user["level"]
+        }), 200
 
-    # Обновление данных пользователя
-    user['progress']['completed_themes'].append(task_id)
+    # Сохраняем ответ пользователя
+    user['progress'].setdefault('task_answers', {})[task_id] = answer
+
+    # Обновляем прогресс
+    user['progress'].setdefault('completed_themes', []).append(task_id)
     user['experience'] += 50
 
     new_achievements = update_level(users, user_id)
 
-    # Обновляем данные в словаре и сохраняем
+    # Сохраняем изменения
     users[user_id] = user
     save_all_users(users)
 
@@ -531,7 +535,7 @@ def get_user_progress():
 
     # Пример: прогресс по каждому курсу
     all_courses = {
-        "1": 15,  # курс 1 — 15 тем
+        "1": 21,  # курс 1 — 21 тем
         "2": 10,  # курс 2 — 10 тем
         "3": 20   # курс 3 — 20 тем
     }
