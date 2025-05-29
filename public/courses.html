@@ -360,7 +360,16 @@ textarea {
           <li data-task-id="1-20">Сравнить ответы ChatGPT и Google на один и тот же вопрос◀️</li>
           
         </ul>
+       
+    </div>
       </div>
+      <div class="block-title">Задай вопрос наставнику:</div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <textarea id="mentor-input" placeholder="Напиши свой вопрос..." style="height: 80px; border-radius: 15px; padding: 10px;"></textarea>
+      <button onclick="sendToMentor()" style="background: #C8F7FF; color: black; border: none; padding: 10px; border-radius: 15px; font-weight: bold; cursor: pointer;">Задать вопрос</button>
+    </div>
+    <div id="mentor-chat" style="margin-top: 20px; max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
+    
       
       
       <!-- Модальное окно -->
@@ -388,6 +397,71 @@ textarea {
       <img src="ai.png" alt="Промпт" class="dom">
     </button>
   </div>
+
+  <!-- Подключи marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  async function sendToMentor() {
+    const input = document.getElementById('mentor-input');
+    const chat = document.getElementById('mentor-chat');
+    const message = input.value.trim();
+    const userId = document.body.dataset.userId;
+    if (!message || !userId) return;
+
+    // ✉️ Сообщение пользователя
+    const userMsg = document.createElement('div');
+    userMsg.innerText = message;
+    userMsg.style.alignSelf = 'flex-end';
+    userMsg.style.background = '#DCF8C6';
+    userMsg.style.padding = '10px';
+    userMsg.style.borderRadius = '15px';
+    userMsg.style.maxWidth = '80%';
+    userMsg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    userMsg.style.color = 'grey';
+    userMsg.style.whiteSpace = 'pre-wrap';
+    chat.appendChild(userMsg);
+    chat.scrollTop = chat.scrollHeight;
+
+    input.value = '';
+
+    // ⏳ Заглушка
+    const responseMsg = document.createElement('div');
+    responseMsg.innerText = 'Наставник думает...';
+    responseMsg.style.alignSelf = 'flex-start';
+    responseMsg.style.background = '#fff';
+    responseMsg.style.padding = '10px';
+    responseMsg.style.borderRadius = '15px';
+    responseMsg.style.maxWidth = '80%';
+    responseMsg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    responseMsg.style.color = 'grey';
+    responseMsg.style.whiteSpace = 'pre-wrap';
+    chat.appendChild(responseMsg);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const res = await fetch('/mentor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, message })
+      });
+      const data = await res.json();
+
+      // ✅ Обработка Markdown и замена на HTML
+      const rawMarkdown = data.reply || 'Ответ не получен.';
+      const html = marked.parse(rawMarkdown);
+
+      responseMsg.innerHTML = html;
+      responseMsg.style.whiteSpace = 'normal'; // Важно: отключить pre-wrap для HTML
+
+      chat.scrollTop = chat.scrollHeight;
+    } catch (err) {
+      responseMsg.innerText = 'Произошла ошибка. Попробуй позже.';
+      chat.scrollTop = chat.scrollHeight;
+    }
+  }
+</script>
+
 
 
   <!-- Модальное окно -->
