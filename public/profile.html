@@ -191,6 +191,43 @@ body {
   width: auto;
 }
 
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  justify-items: center;
+  margin-top: 12px;
+}
+
+.achievement-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+  font-size: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.achievement-emoji {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.achievement-label {
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
   </style>
 <script>
     function isDark(hexColor) {
@@ -219,6 +256,10 @@ body {
           background: ${secondaryBgColor} !important;
           color: ${textColor} !important;
         }
+        .achievement-card {
+        background-color:#23282B !important;
+        }
+        .achievement-label {color:white !important}
         .card h1, .card h2, .card a {
           color: ${textColor} !important;
         }
@@ -231,8 +272,8 @@ body {
           filter: none !important;
         }
         .modal-content {
-          background-color: ${secondaryBgColor} !important;
-          color: ${textColor} !important;
+          background-color: #23282B !important;
+          color: white !important;
         }
         .toast {
           background-color: ${hintColor} !important;
@@ -280,13 +321,16 @@ body {
               <span id="leagueEmoji"></span>
               <span id="leagueName"></span>
             </div>
-            <p id="profileAchievements"></p>
+            <p id="profileAchievements" style="display:none;"></p>
+            <button onclick="openAchievements()">Достижения</button>
             <p id="profileSubscriptionStatus"></p>
             <button onclick="buySubscription()">Купить подписку за ⭐ 320</button>
             <button id="confirmSubscriptionBtn" onclick="confirmSubscription()" style="display: none;">Подтвердить подписку</button>
           </div>
         </div>
       </div>
+
+
       <div class="footer">
         <!-- Кнопка "Профиль" -->
     <button class="dom-btn" onclick="window.location.href='index.html'" title="Главная">
@@ -303,6 +347,49 @@ body {
         <img src="ai.png" alt="Промпт" class="dom">
       </button>
       </div>
+
+
+      <div id="achievementsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span class="close" onclick="closeAchievements()">&times;</span>
+          <h2>Достижения</h2>
+          <div id="achievementsContent" class="achievements-grid">Загрузка...</div>
+        </div>
+      </div>
+      
+      <script>
+ function openAchievements() {
+  document.getElementById("achievementsModal").style.display = "block";
+  const userId = Telegram.WebApp.initDataUnsafe.user?.id;
+  fetch(`/api/user/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("achievementsContent");
+      container.innerHTML = '';
+
+      if (!data.achievements || data.achievements.length === 0) {
+        container.innerText = 'Пока нет достижений';
+        return;
+      }
+
+      data.achievements.forEach(item => {
+        const emoji = item.emoji || '🏅'; // запасной эмодзи
+        const label = item.label || '';
+        const card = document.createElement('div');
+        card.className = 'achievement-card';
+        card.innerHTML = `
+          <div class="achievement-emoji">${emoji}</div>
+          <div class="achievement-label">${label}</div>
+        `;
+        container.appendChild(card);
+      });
+    });
+}
+
+function closeAchievements() {
+  document.getElementById("achievementsModal").style.display = "none";
+}
+      </script>
  
       <script>
         function openProfile() {
