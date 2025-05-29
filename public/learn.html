@@ -230,6 +230,42 @@
   overflow: hidden;
   margin-top: 30px;
 }
+.course-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #fff;
+  color: #000;
+  padding: 16px 24px;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  animation: popupFade 3s ease-in-out;
+  max-width: 280px;
+  text-align: center;
+  border: 2px solid #6DE1FF;
+}
+
+@keyframes popupFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
 
   </style>
 <script>
@@ -322,11 +358,11 @@
       <img src="chelikblya.png" alt="Курс 2" class="img_2">
       <h1>Типы нейросетей</h1>
       <h2>@cmsxkl</h2>
-      <a href="#" onclick="windw.location.href = 'courses_2.html'">Начать курс</a>
+      <a href="#" onclick="window.location.href = 'courses_2.html'">Начать курс</a>
       <div class="progress-container">
-        <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        <div id="progress-bar-2" class="progress-bar" style="width: 0%;"></div>
       </div>
-      <p id="progress-label">Загрузка прогресса...</p>
+      <p id="progress-label-2">Загрузка прогресса...</p>
     </div>
 
     <div class="card">
@@ -383,6 +419,8 @@
   <div id="achievement-toast" class="toast hidden"></div>
 
 <script>
+const shownPopups = new Set();
+
 function getUserProgress(userId) {
   fetch('/get_user_progress', {
     method: 'POST',
@@ -397,13 +435,22 @@ function getUserProgress(userId) {
   })
   .then(data => {
     if (data.success) {
+      const shownPopups = JSON.parse(localStorage.getItem('shownPopups') || '{}');
+
       for (const courseId in data.courses) {
         const course = data.courses[courseId];
         const bar = document.getElementById(`progress-bar-${courseId}`);
         const label = document.getElementById(`progress-label-${courseId}`);
+
         if (bar && label) {
           bar.style.width = `${course.progress_percent}%`;
           label.textContent = `${course.progress_percent}% завершено`;
+
+          if (course.progress_percent === 100 && !shownPopups[courseId]) {
+            showCourseCompletionPopup(courseId, course.course_name);
+            shownPopups[courseId] = true;
+            localStorage.setItem('shownPopups', JSON.stringify(shownPopups));
+          }
         }
       }
     } else {
@@ -413,6 +460,21 @@ function getUserProgress(userId) {
   .catch(error => {
     console.error('Ошибка при получении прогресса:', error);
   });
+}
+function showCourseCompletionPopup(courseId, courseName) {
+  const popup = document.createElement('div');
+  popup.className = 'course-popup';
+  popup.innerHTML = `
+    <div class="popup-content">
+      <h2>🎉 ${courseName} завершён!</h2>
+      <p>Вы получили +500 опыта и новое достижение!</p>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 3000);
 }
 document.addEventListener('DOMContentLoaded', () => {
   const userId = Telegram.WebApp.initDataUnsafe.user?.id;
