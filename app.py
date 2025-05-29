@@ -168,6 +168,10 @@ def save_users(users):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump({"users": users}, f, ensure_ascii=False, indent=4)
 
+def save_all_users(users):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump({"users": users}, f, ensure_ascii=False, indent=4)
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze_prompt():
     try:
@@ -469,6 +473,44 @@ def get_completed_tasks():
 
     return jsonify({'completedTasks': completed})
 
+@app.route('/mark_task_complete', methods=['POST'])
+def mark_task_complete():
+    print("Абсолютный путь к DATA_FILE:", os.path.abspath(DATA_FILE))
+
+    data = request.get_json()
+    user_id = str(data.get('user_id'))
+    task_id = data.get('task_id')
+
+    if not user_id or not task_id:
+        return jsonify({"success": False, "message": "user_id или task_id не указаны"}), 400
+
+    users = load_users()
+    print("Загруженные пользователи:", users.keys())
+
+    if user_id not in users:
+        return jsonify({'error': f'Пользователь {user_id} не найден'}), 404
+
+    user = users[user_id]
+
+    if task_id in user['progress'].get('completed_themes', []):
+        return jsonify({"success": True, "message": "Задача уже выполнена"}), 200
+
+    # Обновление данных пользователя
+    user['progress']['completed_themes'].append(task_id)
+    user['experience'] += 50
+
+    new_achievements = update_level(users, user_id)
+
+    # Обновляем данные в словаре и сохраняем
+    users[user_id] = user
+    save_all_users(users)
+
+    return jsonify({
+        "success": True,
+        "message": "Опыт добавлен, задача отмечена",
+        "new_level": user["level"],
+        "new_achievements": new_achievements
+    }), 200
 
 
 
