@@ -29,21 +29,6 @@
         "task-1-1"
       ]
     },
-    "1761547850": {
-      "username": "Miyounii",
-      "progress": {
-        "completed_themes": [],
-        "tests_passed": 2,
-        "test_results": [],
-        "best_prompts": [],
-        "completed_tests": [],
-        "experience": 10,
-        "level": 0
-      },
-      "level": 1,
-      "achievements": [],
-      "feedback": []
-    },
     "5244307856": {
       "username": "LubitelusOfManulus",
       "progress": {
@@ -126,31 +111,65 @@
     "6836335949": {
       "username": "code0genius",
       "progress": {
-        "completed_themes": [],
+        "completed_themes": [
+          "1-1",
+          "1-2",
+          "1-3",
+          "1-4",
+          "1-5",
+          "1-6",
+          "1-20"
+        ],
         "tests_passed": 0,
         "test_results": [],
-        "best_prompts": []
+        "best_prompts": [],
+        "task_answers": {
+          "1-20": null
+        }
       },
-      "level": 19,
-      "experience": 4260,
+      "level": 11,
+      "experience": 5450,
       "achievements": [
         "code0genius",
-        "cmsxkl"
+        "cmsxkl",
+        "Ученики ИИ",
+        "Подмастерье TeachAI",
+        "Инженер Промптов"
       ],
-      "feedback": []
+      "feedback": [],
+      "last_prompt_time": 1748525533.2101104,
+      "last_prompt_hash": "67e811a33dab337b9d24bf8173e646ca47831ad324865dfa518df2d39923237d",
+      "achievements_cache": {
+        "code0genius": "🌐",
+        "cmsxkl": "🦾",
+        "Ученики ИИ": "💡",
+        "Подмастерье TeachAI": "🧭",
+        "Инженер Промптов": "🌐"
+      }
     },
     "1852861777": {
       "username": "RainTetei",
       "progress": {
-        "completed_themes": [],
+        "completed_themes": [
+          "1-4",
+          "1-6",
+          "1-3",
+          "1-1",
+          "1-2",
+          "1-5"
+        ],
         "tests_passed": 0,
         "test_results": [],
         "best_prompts": []
       },
-      "level": 1,
-      "experience": 0,
-      "achievements": [],
-      "feedback": []
+      "level": 3,
+      "experience": 800,
+      "achievements": [
+        "Ученики ИИ"
+      ],
+      "feedback": [],
+      "last_prompt_time": 1748533418.789146,
+      "last_prompt_hash": "b8f9bda04ba4be078b908293d852baa3890d483a781f02d0d07db0df8de4a060"
     },
     "1996114208": {
       "username": "EastCoast_ATUA",
@@ -202,9 +221,11 @@
         "best_prompts": []
       },
       "level": 1,
-      "experience": 0,
+      "experience": 180,
       "achievements": [],
-      "feedback": []
+      "feedback": [],
+      "last_prompt_time": 1748446001.1936858,
+      "last_prompt_hash": "f1996f1617a917a6cb5086615b099ef88a39d42de654ae0ec6ebf19310463df2"
     },
     "817614547": {
       "username": "moy_dom_block",
@@ -228,9 +249,11 @@
         "best_prompts": []
       },
       "level": 1,
-      "experience": 0,
+      "experience": 20,
       "achievements": [],
-      "feedback": []
+      "feedback": [],
+      "last_prompt_time": 1748413533.953184,
+      "last_prompt_hash": "919fd1cab4a8d72a47c52d7c9ad31f20e65a7a9d59d1ef578ff1d3c843d446af"
     },
     "5207237151": {
       "username": "dimonkin1",
@@ -286,6 +309,91 @@
     },
     "1780187915": {
       "username": "plbnk",
+      "progress": {
+        "completed_themes": [],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 0,
+      "achievements": [],
+      "feedback": []
+    },
+    "1761547850": {
+      "username": "Miyounii",
+      "progress": {
+        "completed_themes": [
+          "1-1",
+          "1-2",
+          "1-3",
+          "1-4"
+        ],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 240,
+      "achievements": [],
+      "feedback": [],
+      "last_prompt_time": 1748435015.5027978,
+      "last_prompt_hash": "18fdac2f66cbef05fcc6ccf55bb4d767b7c19bf1216b2fc9687180cac2b747b7"
+    },
+    "1754023023": {
+      "username": "Merrrexx",
+      "progress": {
+        "completed_themes": [],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 0,
+      "achievements": [],
+      "feedback": []
+    },
+    "1367246049": {
+      "username": "Sojomoschi",
+      "progress": {
+        "completed_themes": [],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 0,
+      "achievements": [],
+      "feedback": []
+    },
+    "1801153461": {
+      "username": "l1m41c",
+      "progress": {
+        "completed_themes": [],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 0,
+      "achievements": [],
+      "feedback": []
+    },
+    "1960485787": {
+      "username": "evangeIiona",
+      "progress": {
+        "completed_themes": [],
+        "tests_passed": 0,
+        "test_results": [],
+        "best_prompts": []
+      },
+      "level": 1,
+      "experience": 0,
+      "achievements": [],
+      "feedback": []
+    },
+    "828732461": {
+      "username": "Sw_EkLa",
       "progress": {
         "completed_themes": [],
         "tests_passed": 0,
